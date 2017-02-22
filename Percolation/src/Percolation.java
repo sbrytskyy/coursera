@@ -7,6 +7,8 @@ public class Percolation {
     private int[][] model;
     private int n;
     private int openCount = 0;
+    private int top; // top virtual site
+    private int bottom; // bottom virtual site
 
     private WeightedQuickUnionUF uf;
 
@@ -18,7 +20,10 @@ public class Percolation {
         }
 
         model = new int[n][n];
-        uf = new WeightedQuickUnionUF(n * n);
+        top = n * n;
+        bottom = n * n + 1;
+
+        uf = new WeightedQuickUnionUF(n * n + 2);
     }
 
     public void open(int row, int col) { // open site (row, col) if it is not
@@ -26,7 +31,9 @@ public class Percolation {
         if (row <= 0 || row > n || col <= 0 || col > n)
             throw new IndexOutOfBoundsException();
 
-        if (model[row - 1][col - 1] == 1) return;
+        if (model[row - 1][col - 1] > 0)
+            return;
+
         model[row - 1][col - 1] = 1;
         openCount++;
 
@@ -34,26 +41,27 @@ public class Percolation {
         int c = col - 1;
 
         // check upper site, if open - connect
-        if ((row > 1 && isOpen(row - 1, col))) {
-            int p = r * n + c;
+        int p = r * n + c;
+        if (row == 1) {
+            uf.union(p, top);
+        } else if (isOpen(row - 1, col)) {
             int q = (r - 1) * n + c;
             uf.union(p, q);
         }
         // lower
-        if ((row < n && isOpen(row + 1, col))) {
-            int p = r * n + c;
+        if (row == n) {
+            uf.union(p, bottom);
+        } else if (isOpen(row + 1, col)) {
             int q = (r + 1) * n + c;
             uf.union(p, q);
         }
         // left
         if ((col > 1 && isOpen(row, col - 1))) {
-            int p = r * n + c;
             int q = r * n + c - 1;
             uf.union(p, q);
         }
         // right
         if ((col < n && isOpen(row, col + 1))) {
-            int p = r * n + c;
             int q = r * n + c + 1;
             uf.union(p, q);
         }
@@ -63,7 +71,7 @@ public class Percolation {
         if (row <= 0 || row > n || col <= 0 || col > n)
             throw new IndexOutOfBoundsException();
 
-        return model[row - 1][col - 1] == 1;
+        return model[row - 1][col - 1] > 0;
 
     }
 
@@ -71,17 +79,9 @@ public class Percolation {
         if (row <= 0 || row > n || col <= 0 || col > n)
             throw new IndexOutOfBoundsException();
 
-        if (row == 1)
-            return isOpen(row, col);
-
         int q = (row - 1) * n + col - 1;
 
-        for (int i = 0; i < n; i++) {
-            if (uf.connected(i, q)) {
-                return true;
-            }
-        }
-        return false;
+        return uf.connected(top, q);
     }
 
     public int numberOfOpenSites() { // number of open sites
@@ -89,12 +89,7 @@ public class Percolation {
     }
 
     public boolean percolates() { // does the system percolate?
-        for (int i = 1; i <= n; i++) {
-            if (isFull(n, i)) {
-                return true;
-            }
-        }
-        return false;
+        return uf.connected(top, bottom);
     }
 
     private void test() {
