@@ -31,11 +31,10 @@ public class Percolation {
         if (row <= 0 || row > n || col <= 0 || col > n)
             throw new IndexOutOfBoundsException();
 
-        if (model[row - 1][col - 1] > 0)
-            return;
-
-        model[row - 1][col - 1] = 1;
-        openCount++;
+        if (model[row - 1][col - 1] == 0) {
+            openCount++;
+            model[row - 1][col - 1] = 1;
+        }
 
         int r = row - 1;
         int c = col - 1;
