@@ -20,7 +20,7 @@ public class Percolation {
         }
 
         model = new int[n][n];
-        top = n * n;
+        top = 0;
         bottom = n * n + 1;
 
         uf = new WeightedQuickUnionUF(n * n + 2);
@@ -37,7 +37,7 @@ public class Percolation {
         }
 
         int r = row - 1;
-        int c = col - 1;
+        int c = col;
 
         // check upper site, if open - connect
         int p = r * n + c;
@@ -78,7 +78,7 @@ public class Percolation {
         if (row <= 0 || row > n || col <= 0 || col > n)
             throw new IndexOutOfBoundsException();
 
-        int q = (row - 1) * n + col - 1;
+        int q = (row - 1) * n + col;
 
         return uf.connected(top, q);
     }
