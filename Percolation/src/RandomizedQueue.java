@@ -73,7 +73,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         private int current = -1;
         private Item[] items;
 
-        @SuppressWarnings("unchecked")
         public RandomizedQueueIterator() {
             if (size > 0) {
                 int[] x = StdRandom.permutation(size);
@@ -126,8 +125,8 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     public Iterator<Item> iterator() {
         Iterator<Item> it = new RandomizedQueueIterator();
-        return it;// return an independent iterator over
-                  // items in random order
+        return it; // return an independent iterator over
+                   // items in random order
 
     }
 
