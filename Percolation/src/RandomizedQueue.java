@@ -143,17 +143,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         dq.enqueue("8");
 
         printDeque(dq);
-    }
-
-    private static void printDeque(RandomizedQueue<String> dq) {
-        System.out.println("------------");
-        Iterator<String> it = dq.iterator();
-        while (it.hasNext()) {
-            String s = it.next();
-            System.out.println(s);
-        }
-        System.out.println("------------");
-
+        
         String s = dq.sample();
         System.out.println(s);
         s = dq.sample();
@@ -164,5 +154,15 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         System.out.println(s);
         s = dq.sample();
         System.out.println(s);
+    }
+
+    private static void printDeque(RandomizedQueue<String> dq) {
+        System.out.println("------------");
+        Iterator<String> it = dq.iterator();
+        while (it.hasNext()) {
+            String s = it.next();
+            System.out.println(s);
+        }
+        System.out.println("------------");
     }
 }
