@@ -10,8 +10,9 @@
  ******************************************************************************/
 
 import java.util.Comparator;
-import java.util.Random;
+// import java.util.Random;
 
+import edu.princeton.cs.algs4.In;
 // import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
@@ -141,35 +142,31 @@ public class Point implements Comparable<Point> {
     public static void main(String[] args) {
 
         // read the n points from a file
-//        In in = new In(args[0]);
-//        int n = in.readInt();
-        int n = 100;
-        Random r = new Random();
+        In in = new In(args[0]);
+        int n = in.readInt();
+//        int n = 100;
+//        Random r = new Random();
                 
         Point[] points = new Point[n];
         for (int i = 0; i < n; i++) {
-//            int x = in.readInt();
-//            int y = in.readInt();
-          int x = r.nextInt(32);
-          int y = r.nextInt(32);
+            int x = in.readInt();
+            int y = in.readInt();
+//          int x = r.nextInt(32);
+//          int y = r.nextInt(32);
             points[i] = new Point(x, y);
         }
-
-        // draw the points
-        StdDraw.enableDoubleBuffering();
-        StdDraw.setXscale(0, 32);
-        StdDraw.setYscale(0, 32);
-        for (Point p : points) {
-            p.draw();
-        }
-        StdDraw.show();
-
-        // print and draw the line segments
-        BruteCollinearPoints collinear = new BruteCollinearPoints(points);
-        for (LineSegment segment : collinear.segments()) {
+        
+        BruteCollinearPoints b = new BruteCollinearPoints(points);
+        StdOut.println(b.segments().length);
+        for (LineSegment segment : b.segments()) {
             StdOut.println(segment);
-            segment.draw();
         }
-        StdDraw.show();
+
+        FastCollinearPoints f = new FastCollinearPoints(points);
+        StdOut.println(f.segments().length);
+        for (LineSegment segment : f.segments()) {
+            StdOut.println(segment);
+        }
+
     }
 }
