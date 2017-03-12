@@ -15,38 +15,33 @@ public class BruteCollinearPoints {
 
         int len = points.length;
 
-        for (int ip = 0; ip < len - 3; ip++) {
+        for (int ip = 0; ip < len - 1; ip++) {
             Point p = points[ip];
             if (p == null) {
                 throw new NullPointerException();
             }
-            for (int iq = ip + 1; iq < len - 2; iq++) {
+            for (int iq = ip + 1; iq < len; iq++) {
                 Point q = points[iq];
                 if (q == null) {
                     throw new NullPointerException();
                 }
-                if (p.compareTo(q) == 0) {
+                if (q.compareTo(p) == 0) {
                     throw new IllegalArgumentException();
                 }
+            }
+        }
+
+        for (int ip = 0; ip < len - 3; ip++) {
+            Point p = points[ip];
+            for (int iq = ip + 1; iq < len - 2; iq++) {
+                Point q = points[iq];
                 double slopePQ = p.slopeTo(q);
                 for (int ir = iq + 1; ir < len - 1; ir++) {
                     Point r = points[ir];
-                    if (r == null) {
-                        throw new NullPointerException();
-                    }
-                    if (q.compareTo(r) == 0) {
-                        throw new IllegalArgumentException();
-                    }
                     double slopePR = p.slopeTo(r);
                     if (Double.compare(slopePQ, slopePR) == 0) {
                         for (int is = ir + 1; is < len; is++) {
                             Point s = points[is];
-                            if (s == null) {
-                                throw new NullPointerException();
-                            }
-                            if (r.compareTo(s) == 0) {
-                                throw new IllegalArgumentException();
-                            }
                             double slopePS = p.slopeTo(s);
                             if (Double.compare(slopePQ, slopePS) == 0) {
                                 LineSegment seg = createSegment(p, q, r, s);
