@@ -12,10 +12,9 @@
 import java.util.Comparator;
 import java.util.Random;
 
-import edu.princeton.cs.algs4.In;
+// import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.StdRandom;
 
 public class Point implements Comparable<Point> {
 
@@ -74,6 +73,9 @@ public class Point implements Comparable<Point> {
                 return Double.NEGATIVE_INFINITY;
             }
             return Double.POSITIVE_INFINITY;
+        }
+        if (that.y == y) {
+            return 0.0;
         }
         return 1.0 * (that.y - y) / (that.x - x);
     }
@@ -169,6 +171,5 @@ public class Point implements Comparable<Point> {
             segment.draw();
         }
         StdDraw.show();
-        
     }
 }
