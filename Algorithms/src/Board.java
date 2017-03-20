@@ -1,16 +1,16 @@
-import java.util.Arrays;
-
-import edu.princeton.cs.algs4.StdOut;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Board {
 
     private int dim;
-    private int[] array;
+    private int[][] array;
     private int hamming;
     private int manhattan;
-    private int zero;
-    private Iterable<Board> neighbors;
 
+    private int zeroRow;
+    private int zeroCol;
+    
     public Board(int[][] blocks) { // construct a board from an n-by-n array of
                                    // blocks
                                    // (where blocks[i][j] = block in row i,
@@ -24,20 +24,19 @@ public class Board {
             // not square
         }
         int len = dim * dim;
-        array = new int[len];
+        array = new int[dim][dim];
         for (int i = 0; i < dim; i++) {
             for (int j = 0; j < dim; j++) {
                 int index = i * dim + j;
                 int value = blocks[i][j];
 
-                array[index] = value;
+                array[i][j] = value;
                 if (value != 0) {
                     if ((index != len - 1 && value != index + 1) || (index == len - 1 && value != 0)) {
                         hamming++;
                     }
 
-                    // StdOut.print("index: " + index + ", value: " + value + ",
-                    // home: " + (value - 1));
+                    //StdOut.println("i: " + i + ", j: " + j + ", value: " + value + ", home: " + (value - 1));
                     int rowsDiff = (value - 1) / dim - index / dim;
                     int colsDiff = (value - 1) % dim - index % dim;
                     int m = Math.abs(rowsDiff) + Math.abs(colsDiff);
@@ -45,19 +44,57 @@ public class Board {
                     // + colsDiff);
                     manhattan += m;
                 } else {
-                    zero = index;
+                    zeroRow = i;
+                    zeroCol = j;
                 }
             }
         }
-        
-        findNeighbors();
     }
 
-    private void findNeighbors() {
-        int row = zero / dim;
-        int col = zero % dim;
+    private void findNeighbors(List<Board> neighbors) {
+        // StdOut.println("zero row: " + zeroRow + ", col: " + zeroCol);
+        Board top = moveZero(-1, 0);
+        if (top != null) {
+            neighbors.add(top);
+        }
+        // StdOut.println("Zero Top: " + top);
+        Board bottom = moveZero(1, 0);
+        if (bottom != null) {
+            neighbors.add(bottom);
+        }
+        // StdOut.println("Zero Bottom: " + bottom);
+
+        Board left = moveZero(0, -1);
+        if (left != null) {
+            neighbors.add(left);
+        }
+        // StdOut.println("Zero Left: " + left);
         
-        StdOut.println("zero row: " + row + ", col: " + col);
+        Board right = moveZero(0, 1);
+        if (right != null) {
+            neighbors.add(right);
+        }
+        // StdOut.println("Zero Right: " + right);
+    }
+
+    private Board moveZero(int rowShift, int colShift) {
+        int newZeroRow = zeroRow + rowShift;
+        int newZeroCol = zeroCol + colShift;
+        
+        if (newZeroRow >= dim || newZeroRow < 0) return null;
+        if (newZeroCol >= dim || newZeroCol < 0) return null;
+        
+        int[][] newBoard = new int[dim][dim];
+        for (int i = 0; i < dim; i++) {
+            for (int j = 0; j < dim; j++) {
+                newBoard[i][j] = array[i][j];
+            }
+        }
+        
+        newBoard[zeroRow][zeroCol] = array[newZeroRow][newZeroCol]; 
+        newBoard[newZeroRow][newZeroCol] = 0;
+                
+        return new Board(newBoard);
     }
 
     public int dimension() { // board dimension n
@@ -79,6 +116,26 @@ public class Board {
 
     public Board twin() { // a board that is obtained by exchanging any pair of
                           // blocks
+        Board b = moveZero(-1, 0);
+        if (b != null) {
+            return b;
+        }
+
+        b = moveZero(1, 0);
+        if (b != null) {
+            return b;
+        }
+
+        b = moveZero(0, -1);
+        if (b != null) {
+            return b;
+        }
+        
+        b = moveZero(0, 1);
+        if (b != null) {
+            return b;
+        }
+        
         return null;
     }
 
@@ -103,12 +160,25 @@ public class Board {
     }
 
     public Iterable<Board> neighbors() { // all neighboring boards
+        List<Board> neighbors = new ArrayList<Board>();
+        findNeighbors(neighbors);
+
         return neighbors;
     }
 
     public String toString() { // string representation of this board (in the
                                // output format specified below)
-        return "Board: " + Arrays.toString(array) + ", hamming: " + hamming + ", manhattan: " + manhattan;
+        StringBuilder sb = new StringBuilder();
+        sb.append(dim);
+        sb.append('\n');
+        for (int i = 0; i < dim; i++) {
+            for (int j = 0; j < dim; j++) {
+                sb.append(String.format("%2d", array[i][j]));
+                sb.append(' ');
+            }
+            sb.append('\n');
+        }
+        return sb.toString();
     }
 
     public static void main(String[] args) { // unit tests (not graded)

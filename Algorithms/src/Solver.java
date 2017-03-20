@@ -12,7 +12,7 @@ public class Solver {
     }
 
     public boolean isSolvable() { // is the initial board solvable?
-        return true;
+        return false;
     }
 
     public int moves() { // min number of moves to solve initial board; -1 if
@@ -36,6 +36,8 @@ public class Solver {
                 blocks[i][j] = in.readInt();
         Board initial = new Board(blocks);
         StdOut.println(initial);
+        
+        initial.neighbors();
 
         // solve the puzzle
         Solver solver = new Solver(initial);
