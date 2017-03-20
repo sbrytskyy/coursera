@@ -12,46 +12,51 @@ public class Solver {
 
         @Override
         public int compare(Board o1, Board o2) {
-            if (o1.manhattan() < o2.manhattan())
-                return -1;
-            if (o1.manhattan() > o2.manhattan())
-                return 1;
-            return 0;
+            int compare = Integer.compare(o1.manhattan(), o2.manhattan());
+            if (compare == 0) {
+                compare = Integer.compare(o1.hamming(), o2.hamming());
+            }
+            return compare;
         }
     };
 
     private MinPQ<Board> minPQ = new MinPQ<Board>(comparator);
 
     private int moves = 0;
-    
+
     private List<Board> solution = new ArrayList<>();
 
     private boolean solvable;
-    
+
     public Solver(Board initial) { // find a solution to the initial board
                                    // (using the A* algorithm)
 
         Board current = initial;
         solution.add(current);
         while (true) {
-            
+
             if (current.isGoal()) {
                 solvable = true;
                 break;
             }
             Iterable<Board> neighbors = current.neighbors();
             moves++;
-            if (moves > 10000) {
+            if (moves > 1000000) {
                 break;
             }
-                
+
             for (Board board : neighbors) {
                 minPQ.insert(board);
             }
-            
-            current = minPQ.delMin();
-            solution.add(current);
-            //StdOut.println(current);
+
+            while (true) {
+                current = minPQ.delMin();
+                if (!solution.contains(current)) {
+                    solution.add(current);
+                    //StdOut.println(current);
+                    break;
+                }
+            }
         }
     }
 
@@ -79,11 +84,11 @@ public class Solver {
             for (int j = 0; j < n; j++)
                 blocks[i][j] = in.readInt();
         Board initial = new Board(blocks);
-    //        StdOut.println(initial);
-    //
-    //        initial.neighbors();
-    //
-    //        StdOut.println(initial.twin());
+        // StdOut.println(initial);
+        //
+        // initial.neighbors();
+        //
+        // StdOut.println(initial.twin());
 
         // solve the puzzle
         Solver solver = new Solver(initial);
