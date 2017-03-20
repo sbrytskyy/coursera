@@ -39,6 +39,8 @@ public class Solver {
         
         initial.neighbors();
 
+        StdOut.println(initial.twin());
+
         // solve the puzzle
         Solver solver = new Solver(initial);
 

@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.princeton.cs.algs4.StdRandom;
+
 public class Board {
 
     private int dim;
@@ -119,27 +121,30 @@ public class Board {
 
     public Board twin() { // a board that is obtained by exchanging any pair of
                           // blocks
-        Board b = moveZero(-1, 0);
-        if (b != null) {
-            return b;
+
+        int[][] newBoard = new int[dim][dim];
+        for (int i = 0; i < dim; i++) {
+            for (int j = 0; j < dim; j++) {
+                newBoard[i][j] = array[i][j];
+            }
         }
 
-        b = moveZero(1, 0);
-        if (b != null) {
-            return b;
+        while (true) {
+            int row1 = StdRandom.uniform(dim);
+            int col1 = StdRandom.uniform(dim);
+            
+            int row2 = StdRandom.uniform(dim);
+            int col2 = StdRandom.uniform(dim);
+            
+            if (array[row1][col1] == 0 || array[row2][col2] == 0) continue;
+            
+            newBoard[row1][col1] = array[row2][col2];
+            newBoard[row2][col2] = array[row1][col1];
+                    
+            break;
         }
 
-        b = moveZero(0, -1);
-        if (b != null) {
-            return b;
-        }
-
-        b = moveZero(0, 1);
-        if (b != null) {
-            return b;
-        }
-
-        return null;
+        return new Board(newBoard);
     }
 
     public boolean equals(Object y) { // does this board equal y?
