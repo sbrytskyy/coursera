@@ -10,7 +10,7 @@ public class Board {
 
     private int zeroRow;
     private int zeroCol;
-    
+
     public Board(int[][] blocks) { // construct a board from an n-by-n array of
                                    // blocks
                                    // (where blocks[i][j] = block in row i,
@@ -36,7 +36,8 @@ public class Board {
                         hamming++;
                     }
 
-                    //StdOut.println("i: " + i + ", j: " + j + ", value: " + value + ", home: " + (value - 1));
+                    // StdOut.println("i: " + i + ", j: " + j + ", value: " +
+                    // value + ", home: " + (value - 1));
                     int rowsDiff = (value - 1) / dim - index / dim;
                     int colsDiff = (value - 1) % dim - index % dim;
                     int m = Math.abs(rowsDiff) + Math.abs(colsDiff);
@@ -69,7 +70,7 @@ public class Board {
             neighbors.add(left);
         }
         // StdOut.println("Zero Left: " + left);
-        
+
         Board right = moveZero(0, 1);
         if (right != null) {
             neighbors.add(right);
@@ -80,20 +81,22 @@ public class Board {
     private Board moveZero(int rowShift, int colShift) {
         int newZeroRow = zeroRow + rowShift;
         int newZeroCol = zeroCol + colShift;
-        
-        if (newZeroRow >= dim || newZeroRow < 0) return null;
-        if (newZeroCol >= dim || newZeroCol < 0) return null;
-        
+
+        if (newZeroRow >= dim || newZeroRow < 0)
+            return null;
+        if (newZeroCol >= dim || newZeroCol < 0)
+            return null;
+
         int[][] newBoard = new int[dim][dim];
         for (int i = 0; i < dim; i++) {
             for (int j = 0; j < dim; j++) {
                 newBoard[i][j] = array[i][j];
             }
         }
-        
-        newBoard[zeroRow][zeroCol] = array[newZeroRow][newZeroCol]; 
+
+        newBoard[zeroRow][zeroCol] = newBoard[newZeroRow][newZeroCol];
         newBoard[newZeroRow][newZeroCol] = 0;
-                
+
         return new Board(newBoard);
     }
 
@@ -130,12 +133,12 @@ public class Board {
         if (b != null) {
             return b;
         }
-        
+
         b = moveZero(0, 1);
         if (b != null) {
             return b;
         }
-        
+
         return null;
     }
 
@@ -145,17 +148,21 @@ public class Board {
         if (!(y instanceof Board))
             return false;
         Board b2 = (Board) y;
-        
-        if (dim != b2.dim) return false;
-        
-        if (array.length != b2.array.length) return false;
-        
-        for (int i = 0; i < array.length; i++) {
-            if (array[i] != b2.array[i]) {
-                return false;
+
+        if (dim != b2.dim)
+            return false;
+
+        if (array.length != b2.array.length)
+            return false;
+
+        for (int i = 0; i < dim; i++) {
+            for (int j = 0; j < dim; j++) {
+                if (array[i][j] != (b2.array[i][j])) {
+                    return false;
+                }
             }
         }
-        
+
         return true;
     }
 
