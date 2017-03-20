@@ -1,28 +1,72 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
 public class Solver {
 
-    private MinPQ minPQ = new MinPQ();
+    private Comparator<Board> comparator = new Comparator<Board>() {
 
+        @Override
+        public int compare(Board o1, Board o2) {
+            if (o1.manhattan() < o2.manhattan())
+                return -1;
+            if (o1.manhattan() > o2.manhattan())
+                return 1;
+            return 0;
+        }
+    };
+
+    private MinPQ<Board> minPQ = new MinPQ<Board>(comparator);
+
+    private int moves = 0;
+    
+    private List<Board> solution = new ArrayList<>();
+
+    private boolean solvable;
+    
     public Solver(Board initial) { // find a solution to the initial board
                                    // (using the A* algorithm)
 
+        Board current = initial;
+        solution.add(current);
+        while (true) {
+            
+            if (current.isGoal()) {
+                solvable = true;
+                break;
+            }
+            Iterable<Board> neighbors = current.neighbors();
+            moves++;
+            if (moves > 10000) {
+                break;
+            }
+                
+            for (Board board : neighbors) {
+                minPQ.insert(board);
+            }
+            
+            current = minPQ.delMin();
+            solution.add(current);
+            //StdOut.println(current);
+        }
     }
 
     public boolean isSolvable() { // is the initial board solvable?
-        return false;
+        return solvable;
     }
 
     public int moves() { // min number of moves to solve initial board; -1 if
                          // unsolvable
-        return 0;
+        return solvable ? moves : -1;
     }
 
     public Iterable<Board> solution() { // sequence of boards in a shortest
                                         // solution; null if unsolvable
-        return null;
+        return solvable ? solution : null;
     }
 
     public static void main(String[] args) { // solve a slider puzzle (given
@@ -35,11 +79,11 @@ public class Solver {
             for (int j = 0; j < n; j++)
                 blocks[i][j] = in.readInt();
         Board initial = new Board(blocks);
-        StdOut.println(initial);
-        
-        initial.neighbors();
-
-        StdOut.println(initial.twin());
+    //        StdOut.println(initial);
+    //
+    //        initial.neighbors();
+    //
+    //        StdOut.println(initial.twin());
 
         // solve the puzzle
         Solver solver = new Solver(initial);
