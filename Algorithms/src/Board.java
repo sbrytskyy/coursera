@@ -122,27 +122,29 @@ public class Board {
     public Board twin() { // a board that is obtained by exchanging any pair of
                           // blocks
 
+        int row1 = -1;
+        int col1 = -1;
+
+        int row2 = -1;
+        int col2 = -1;
+
         int[][] newBoard = new int[dim][dim];
         for (int i = 0; i < dim; i++) {
             for (int j = 0; j < dim; j++) {
-                newBoard[i][j] = array[i][j];
+                int value = array[i][j];
+                newBoard[i][j] = value;
+                if (row1 == -1 && value != 0) {
+                    row1 = i;
+                    col1 = j;
+                } else if (row2 == -1 && value != 0) {
+                    row2 = i;
+                    col2 = j;
+                }
             }
         }
 
-        while (true) {
-            int row1 = StdRandom.uniform(dim);
-            int col1 = StdRandom.uniform(dim);
-            
-            int row2 = StdRandom.uniform(dim);
-            int col2 = StdRandom.uniform(dim);
-            
-            if (array[row1][col1] == 0 || array[row2][col2] == 0) continue;
-            
-            newBoard[row1][col1] = array[row2][col2];
-            newBoard[row2][col2] = array[row1][col1];
-                    
-            break;
-        }
+        newBoard[row1][col1] = array[row2][col2];
+        newBoard[row2][col2] = array[row1][col1];
 
         return new Board(newBoard);
     }
@@ -182,8 +184,8 @@ public class Board {
                                // output format specified below)
         StringBuilder sb = new StringBuilder();
         sb.append(dim);
-//        sb.append(", ");
-//        sb.append(hamming);
+        // sb.append(", ");
+        // sb.append(hamming);
         sb.append('\n');
         for (int i = 0; i < dim; i++) {
             for (int j = 0; j < dim; j++) {
