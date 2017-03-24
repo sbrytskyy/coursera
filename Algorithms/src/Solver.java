@@ -22,7 +22,7 @@ public class Solver {
 
     private MinPQ<Board> minPQ = new MinPQ<Board>(comparator);
 
-    private int moves = 0;
+    private int moves = -1;
 
     private List<Board> solution = new ArrayList<>();
 
@@ -31,31 +31,33 @@ public class Solver {
     public Solver(Board initial) { // find a solution to the initial board
                                    // (using the A* algorithm)
 
+        // Board previous = null;
+        minPQ.insert(initial);
+        solution.add(initial);
+
         Board current = initial;
-        solution.add(current);
         while (true) {
 
+            if (minPQ.isEmpty()) break;
+            
+            current = minPQ.delMin();
+            solution.add(current);
+            moves++;
+            
             if (current.isGoal()) {
                 solvable = true;
                 break;
             }
+
             Iterable<Board> neighbors = current.neighbors();
-            moves++;
-            if (moves > 1000000) {
-                break;
-            }
-
             for (Board board : neighbors) {
-                minPQ.insert(board);
+                if (minPQ.isEmpty() || comparator.compare(current, board) > 0) {
+                    minPQ.insert(board);
+                }
             }
 
-            while (true) {
-                current = minPQ.delMin();
-                if (!solution.contains(current)) {
-                    solution.add(current);
-                    //StdOut.println(current);
-                    break;
-                }
+            if (moves > 10000) {
+                break;
             }
         }
     }
@@ -88,7 +90,6 @@ public class Solver {
         //
         // initial.neighbors();
         //
-        // StdOut.println(initial.twin());
 
         // solve the puzzle
         Solver solver = new Solver(initial);

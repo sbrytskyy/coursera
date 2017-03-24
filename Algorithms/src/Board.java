@@ -1,8 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.princeton.cs.algs4.StdRandom;
-
 public class Board {
 
     private int dim;
@@ -184,8 +182,10 @@ public class Board {
                                // output format specified below)
         StringBuilder sb = new StringBuilder();
         sb.append(dim);
-        // sb.append(", ");
-        // sb.append(hamming);
+//        sb.append(", ");
+//        sb.append(manhattan);
+//        sb.append(":");
+//        sb.append(hamming);
         sb.append('\n');
         for (int i = 0; i < dim; i++) {
             for (int j = 0; j < dim; j++) {
