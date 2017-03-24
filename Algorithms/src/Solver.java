@@ -43,12 +43,18 @@ public class Solver {
         public SearchNode getPrev() {
             return prev;
         }
+
+        @Override
+        public String toString() {
+            return "SearchNode [level=" + level + ", board=" + board + ", prev=" + (prev == null ? "NULL" : prev.getBoard()) + "]";
+        }
     }
 
     private MinPQ<SearchNode> minPQ = new MinPQ<SearchNode>();
 
     private int moves = -1;
 
+    private List<Board> visited = new ArrayList<>();
     private List<Board> solution = new ArrayList<>();
 
     private boolean solvable;
@@ -59,6 +65,7 @@ public class Solver {
         // Board previous = null;
         
         SearchNode node = new SearchNode(initial, 0, null);
+        visited.add(initial);
         minPQ.insert(node);
 
         int iterations = 0;
@@ -68,6 +75,8 @@ public class Solver {
             if (minPQ.isEmpty()) break;
             
             current = minPQ.delMin();
+            visited.add(current.getBoard());
+            StdOut.println(current);
             iterations++;
             
             if (current.getBoard().isGoal()) {
@@ -87,13 +96,14 @@ public class Solver {
 
             Iterable<Board> neighbors = current.getBoard().neighbors();
             for (Board board : neighbors) {
-                //if (current.getPrev() != null && !board.equals(current.getPrev().getBoard())) {
+                if (!visited.contains(board)) {
                     SearchNode n = new SearchNode(board, current.getLevel() + 1, current);
+                    StdOut.println("\t" + board);
                     minPQ.insert(n);
-                //}
+                }
             }
 
-            if (iterations > 1000) {
+            if (iterations > 100) {
                 break;
             }
         }
