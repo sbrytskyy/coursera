@@ -1,8 +1,11 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Board {
 
+    private static final boolean TEST = false;
+    
     private int dim;
     private int[][] array;
     private int hamming;
@@ -182,17 +185,24 @@ public class Board {
                                // output format specified below)
         StringBuilder sb = new StringBuilder();
         sb.append(dim);
-//        sb.append(", ");
-//        sb.append(manhattan);
-//        sb.append(":");
-//        sb.append(hamming);
-        sb.append('\n');
-        for (int i = 0; i < dim; i++) {
-            for (int j = 0; j < dim; j++) {
-                sb.append(String.format("%2d", array[i][j]));
-                sb.append(' ');
-            }
+        
+        if (TEST) {
+            sb.append(", ");
+            sb.append(manhattan);
+            sb.append(":");
+            sb.append(hamming);
+            
+            sb.append("; ");
+            sb.append(Arrays.deepToString(array));
+        } else {
             sb.append('\n');
+            for (int i = 0; i < dim; i++) {
+                for (int j = 0; j < dim; j++) {
+                    sb.append(String.format("%2d", array[i][j]));
+                    sb.append(' ');
+                }
+                sb.append('\n');
+            }
         }
         return sb.toString();
     }
