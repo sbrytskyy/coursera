@@ -1,22 +1,22 @@
-import java.util.ArrayList;
-import java.util.List;
-
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 
 public class Solver {
     
     private class SearchNode implements Comparable<SearchNode> {
         private Board board;
-        private int level;
+        private int level = 0;
         private SearchNode prev;
         
-        public SearchNode(Board board, int level, SearchNode prev) {
+        public SearchNode(Board board, SearchNode prev) {
             super();
             this.board = board;
-            this.level = level;
             this.prev = prev;
+            if (prev != null) {
+                this.level = prev.getLevel() + 1;
+            }
         }
 
         @Override
@@ -24,10 +24,15 @@ public class Solver {
             if (this == that)
                 return 0;
 
-            int compare = Integer.compare(this.board.manhattan(), that.board.manhattan());
-            if (compare == 0) {
-                compare = Integer.compare(this.board.hamming(), that.board.hamming());
-            }
+//            int compare = Integer.compare(this.board.manhattan(), that.board.manhattan());
+//            if (compare == 0) {
+//                compare = Integer.compare(this.board.hamming(), that.board.hamming());
+//            }
+//            if (compare == 0) {
+//                compare = Integer.compare(this.level, that.level);
+//            }
+            
+            int compare = (this.board.manhattan() - that.board.manhattan()) + (this.level - that.level);
 
             return compare;
         }
@@ -54,8 +59,7 @@ public class Solver {
 
     private int moves = -1;
 
-    private List<Board> visited = new ArrayList<>();
-    private List<Board> solution = new ArrayList<>();
+    private Stack<Board> solution = new Stack<>();
 
     private boolean solvable;
 
@@ -64,8 +68,7 @@ public class Solver {
 
         // Board previous = null;
         
-        SearchNode node = new SearchNode(initial, 0, null);
-        visited.add(initial);
+        SearchNode node = new SearchNode(initial, null);
         minPQ.insert(node);
 
         int iterations = 0;
@@ -75,35 +78,34 @@ public class Solver {
             if (minPQ.isEmpty()) break;
             
             current = minPQ.delMin();
-            visited.add(current.getBoard());
-            StdOut.println(current);
+//            StdOut.println(current);
             iterations++;
             
             if (current.getBoard().isGoal()) {
                 solvable = true;
                 moves = current.getLevel();
                 
-                solution.add(current.getBoard());
+                solution.push(current.getBoard());
                 
                 SearchNode sn = current;
                 while (true) {
                     sn = sn.getPrev();
                     if (sn == null) break;
-                    solution.add(sn.getBoard());
+                    solution.push(sn.getBoard());
                 }
                 break;
             }
 
             Iterable<Board> neighbors = current.getBoard().neighbors();
             for (Board board : neighbors) {
-                if (!visited.contains(board)) {
-                    SearchNode n = new SearchNode(board, current.getLevel() + 1, current);
-                    StdOut.println("\t" + board);
+                if (current.getPrev() == null || !board.equals(current.getPrev().getBoard())) {
+                    SearchNode n = new SearchNode(board, current);
+//                    StdOut.println("\t" + board);
                     minPQ.insert(n);
                 }
             }
 
-            if (iterations > 100) {
+            if (iterations > 1000) {
                 break;
             }
         }

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Board {
 
-    private static final boolean TEST = true;
+    private static final boolean TEST = false;
     
     private int dim;
     private int[][] array;
