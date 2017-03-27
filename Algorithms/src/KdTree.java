@@ -3,12 +3,15 @@ import java.util.List;
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.RedBlackBST;
 import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class KdTree {
     
-    private SET<Point2D> tree = new SET<>();
+    private RedBlackBST<Point2D, Double> tree = new RedBlackBST<>();
+    
+    private Point2D center = new Point2D(0.5, 0.5); 
     
     public KdTree() { // construct an empty set of points
 
@@ -25,16 +28,16 @@ public class KdTree {
     public void insert(Point2D p) { // add the point to the set (if it is not
                                     // already in the set)
         if (p == null) throw new NullPointerException();
-        tree.add(p);
+        tree.put(p, p.distanceTo(center));
     }
 
     public boolean contains(Point2D p) { // does the set contain point p?
         if (p == null) throw new NullPointerException();
-        return tree.contains(p);
+        return tree.get(p) != null;
     }
 
     public void draw() { // draw all points to standard draw
-        for (Point2D p : tree) {
+        for (Point2D p : tree.keys()) {
             StdDraw.point(p.x(), p.y());
         }
     }
@@ -44,7 +47,7 @@ public class KdTree {
         if (rect == null) throw new NullPointerException();
 
         List<Point2D> l = new ArrayList<>();
-        for (Point2D p : tree) {
+        for (Point2D p : tree.keys()) {
             if (rect.contains(p)) {
                 l.add(p);
             }
@@ -59,7 +62,7 @@ public class KdTree {
         double dist = Double.MAX_VALUE;
         Point2D nearest = null;
         
-        for (Point2D ap : tree) {
+        for (Point2D ap : tree.keys()) {
             double d = p.distanceTo(ap);
             if (d < dist) {
                 dist = d;
