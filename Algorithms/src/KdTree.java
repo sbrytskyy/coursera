@@ -4,7 +4,6 @@ import java.util.List;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.RedBlackBST;
-import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class KdTree {
@@ -47,7 +46,7 @@ public class KdTree {
         if (rect == null) throw new NullPointerException();
 
         List<Point2D> l = new ArrayList<>();
-        for (Point2D p : tree.keys()) {
+        for (Point2D p : tree.keys(new Point2D(rect.xmin(), rect.ymin()), new Point2D(rect.xmax(), rect.ymax()))) {
             if (rect.contains(p)) {
                 l.add(p);
             }
@@ -62,12 +61,17 @@ public class KdTree {
         double dist = Double.MAX_VALUE;
         Point2D nearest = null;
         
-        for (Point2D ap : tree.keys()) {
-            double d = p.distanceTo(ap);
-            if (d < dist) {
-                dist = d;
-                nearest = ap;
+        double delta = 0.0;
+        while (true) {
+            for (Point2D ap : tree.keys(new Point2D(p.x() - delta, p.y() - delta), new Point2D(p.x() + delta, p.y() + delta))) {
+                double d = p.distanceTo(ap);
+                if (d < dist) {
+                    dist = d;
+                    nearest = ap;
+                }
             }
+            if (nearest != null) break;
+            delta += 0.01;
         }
         return nearest;
     }
