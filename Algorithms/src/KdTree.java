@@ -7,11 +7,11 @@ import edu.princeton.cs.algs4.RedBlackBST;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class KdTree {
-    
+
     private RedBlackBST<Point2D, Double> tree = new RedBlackBST<>();
-    
-    private Point2D center = new Point2D(0.5, 0.5); 
-    
+
+    private Point2D center = new Point2D(0.5, 0.5);
+
     public KdTree() { // construct an empty set of points
 
     }
@@ -26,12 +26,14 @@ public class KdTree {
 
     public void insert(Point2D p) { // add the point to the set (if it is not
                                     // already in the set)
-        if (p == null) throw new NullPointerException();
+        if (p == null)
+            throw new NullPointerException();
         tree.put(p, p.distanceTo(center));
     }
 
     public boolean contains(Point2D p) { // does the set contain point p?
-        if (p == null) throw new NullPointerException();
+        if (p == null)
+            throw new NullPointerException();
         return tree.get(p) != null;
     }
 
@@ -43,7 +45,8 @@ public class KdTree {
 
     public Iterable<Point2D> range(RectHV rect) { // all points that are inside
                                                   // the rectangle
-        if (rect == null) throw new NullPointerException();
+        if (rect == null)
+            throw new NullPointerException();
 
         List<Point2D> l = new ArrayList<>();
         for (Point2D p : tree.keys(new Point2D(rect.xmin(), rect.ymin()), new Point2D(rect.xmax(), rect.ymax()))) {
@@ -56,21 +59,32 @@ public class KdTree {
 
     public Point2D nearest(Point2D p) { // a nearest neighbor in the set to
                                         // point p; null if the set is empty
-        if (p == null) throw new NullPointerException();
+        if (p == null)
+            throw new NullPointerException();
 
         double dist = Double.MAX_VALUE;
         Point2D nearest = null;
-        
-        double delta = 0.0;
+
+        double delta = 0.01;
+        boolean lastPass = false;
         while (true) {
-            for (Point2D ap : tree.keys(new Point2D(p.x() - delta, p.y() - delta), new Point2D(p.x() + delta, p.y() + delta))) {
+            Point2D lo = new Point2D(p.x() - delta, p.y() - delta);
+            Point2D hi = new Point2D(p.x() + delta, p.y() + delta);
+            for (Point2D ap : tree.keys(lo, hi)) {
                 double d = p.distanceTo(ap);
                 if (d < dist) {
                     dist = d;
                     nearest = ap;
                 }
             }
-            if (nearest != null) break;
+
+            if (!lastPass && nearest != null) {
+                lastPass = true;
+                delta = dist;
+                continue;
+            }
+            if (lastPass)
+                break;
             delta += 0.01;
         }
         return nearest;
@@ -80,11 +94,11 @@ public class KdTree {
                                              // (optional)
 
         StdDraw.show();
-        
+
         StdDraw.clear();
         StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.setXscale(0.0, 1.0);
-        StdDraw.setYscale(0.0, 1.0);   // leave a border to write text
+        StdDraw.setYscale(0.0, 1.0); // leave a border to write text
 
     }
 }
