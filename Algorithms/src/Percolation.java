@@ -20,7 +20,7 @@ public class Percolation {
         }
 
         model = new boolean[n][n];
-        top = 0;
+        top = n * n;
         bottom = n * n + 1;
 
         uf = new WeightedQuickUnionUF(n * n + 2);
@@ -31,13 +31,13 @@ public class Percolation {
         if (row <= 0 || row > n || col <= 0 || col > n)
             throw new IllegalArgumentException();
 
-        if (!model[row - 1][col - 1]) {
-            openCount++;
-            model[row - 1][col - 1] = true;
-        }
-
         int r = row - 1;
-        int c = col;
+        int c = col - 1;
+
+        if (!model[r][c]) {
+            openCount++;
+            model[r][c] = true;
+        }
 
         // check upper site, if open - connect
         int p = r * n + c;
@@ -78,7 +78,7 @@ public class Percolation {
         if (row <= 0 || row > n || col <= 0 || col > n)
             throw new IllegalArgumentException();
 
-        int q = (row - 1) * n + col;
+        int q = (row - 1) * n + col - 1;
 
         return uf.connected(top, q);
     }
@@ -89,6 +89,28 @@ public class Percolation {
 
     public boolean percolates() { // does the system percolate?
         return uf.connected(top, bottom);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("--------------------------------\n");
+        int width = model[0].length;
+        int height = model.length;
+        sb.append(width + ":" + height + "\n");
+
+        for (int x = 0; x < height; x++) {
+            sb.append("[");
+            for (int y = 0; y < width; y++) {
+                sb.append(model[x][y] ? "X" : "O");
+                if (y < width - 1) {
+                    sb.append(",");
+                }
+            }
+            sb.append("]\n");
+        }
+        sb.append("--------------------------------\n");
+        return sb.toString();
     }
 
     private void test() {
