@@ -16,11 +16,10 @@
  *
  ******************************************************************************/
 
-import java.awt.Font;
-
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdRandom;
+
+import java.awt.Font;
 
 public class PercolationVisualizer {
 
@@ -31,9 +30,9 @@ public class PercolationVisualizer {
     public static void draw(Percolation perc, int n) {
         StdDraw.clear();
         StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.setXscale(-0.05*n, 1.05*n);
-        StdDraw.setYscale(-0.05*n, 1.05*n);   // leave a border to write text
-        StdDraw.filledSquare(n/2.0, n/2.0, n/2.0);
+        StdDraw.setXscale(-0.05 * n, 1.05 * n);
+        StdDraw.setYscale(-0.05 * n, 1.05 * n);   // leave a border to write text
+        StdDraw.filledSquare(n / 2.0, n / 2.0, n / 2.0);
 
         // draw n-by-n grid
         int opened = 0;
@@ -56,19 +55,17 @@ public class PercolationVisualizer {
         // write status text
         StdDraw.setFont(new Font("SansSerif", Font.PLAIN, 12));
         StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.text(0.25*n, -0.025*n, opened + " open sites");
-        if (perc.percolates()) StdDraw.text(0.75*n, -0.025*n, "percolates");
-        else                   StdDraw.text(0.75*n, -0.025*n, "does not percolate");
+        StdDraw.text(0.25 * n, -0.025 * n, opened + " open sites");
+        if (perc.percolates()) StdDraw.text(0.75 * n, -0.025 * n, "percolates");
+        else StdDraw.text(0.75 * n, -0.025 * n, "does not percolate");
 
     }
 
     public static void main(String[] args) {
-        //In in = new In(args[0]);      // input file
-        //int n = in.readInt();         // n-by-n percolation system
+        In in = new In(args[0]);      // input file
+        int n = in.readInt();         // n-by-n percolation system
 
-    	int n = 20;
-    	
-    	// turn on animation mode
+        // turn on animation mode
         StdDraw.enableDoubleBuffering();
 
         // repeatedly read in sites to open and draw resulting system
@@ -76,29 +73,14 @@ public class PercolationVisualizer {
         draw(perc, n);
         StdDraw.show();
         StdDraw.pause(DELAY);
-//        while (!in.isEmpty()) {
-//            int i = in.readInt();
-//            int j = in.readInt();
-//            perc.open(i, j);
-//            draw(perc, n);
-//            StdDraw.show();
-//            StdDraw.pause(DELAY);
-//        }
-
-        int[] x = StdRandom.permutation(n * n);
-
-		for (int i = 0; i < n * n; i++) {
-			int row = x[i] / n + 1;
-			int col = x[i] % n + 1;
-			
-			perc.open(row, col);
+        while (!in.isEmpty()) {
+            int i = in.readInt();
+            int j = in.readInt();
+            perc.open(i, j);
             draw(perc, n);
             StdDraw.show();
             StdDraw.pause(DELAY);
-            
-            if (perc.percolates()) {
-            	break;
-            }
         }
     }
 }
+

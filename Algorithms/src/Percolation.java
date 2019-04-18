@@ -4,13 +4,13 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
 
-    private int[][] model;
-    private int n;
+    private final boolean[][] model;
+    private final int n;
     private int openCount = 0;
-    private int top; // top virtual site
-    private int bottom; // bottom virtual site
+    private final int top; // top virtual site
+    private final int bottom; // bottom virtual site
 
-    private WeightedQuickUnionUF uf;
+    private final WeightedQuickUnionUF uf;
 
     public Percolation(int n) { // create n-by-n grid, with all sites blocked
         this.n = n;
@@ -19,7 +19,7 @@ public class Percolation {
             throw new IllegalArgumentException();
         }
 
-        model = new int[n][n];
+        model = new boolean[n][n];
         top = 0;
         bottom = n * n + 1;
 
@@ -29,11 +29,11 @@ public class Percolation {
     public void open(int row, int col) { // open site (row, col) if it is not
                                          // open already
         if (row <= 0 || row > n || col <= 0 || col > n)
-            throw new IndexOutOfBoundsException();
+            throw new IllegalArgumentException();
 
-        if (model[row - 1][col - 1] == 0) {
+        if (!model[row - 1][col - 1]) {
             openCount++;
-            model[row - 1][col - 1] = 1;
+            model[row - 1][col - 1] = true;
         }
 
         int r = row - 1;
@@ -68,15 +68,15 @@ public class Percolation {
 
     public boolean isOpen(int row, int col) { // is site (row, col) open?
         if (row <= 0 || row > n || col <= 0 || col > n)
-            throw new IndexOutOfBoundsException();
+            throw new IllegalArgumentException();
 
-        return model[row - 1][col - 1] > 0;
+        return model[row - 1][col - 1];
 
     }
 
     public boolean isFull(int row, int col) { // is site (row, col) full?
         if (row <= 0 || row > n || col <= 0 || col > n)
-            throw new IndexOutOfBoundsException();
+            throw new IllegalArgumentException();
 
         int q = (row - 1) * n + col;
 
