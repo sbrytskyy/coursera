@@ -10,7 +10,8 @@ public class Percolation {
     private final int top; // top virtual site
     private final int bottom; // bottom virtual site
 
-    private final WeightedQuickUnionUF uf;
+    private final WeightedQuickUnionUF percolate;
+    private final WeightedQuickUnionUF fill;
 
     public Percolation(int n) { // create n-by-n grid, with all sites blocked
         this.n = n;
@@ -23,7 +24,8 @@ public class Percolation {
         top = n * n;
         bottom = n * n + 1;
 
-        uf = new WeightedQuickUnionUF(n * n + 2);
+        percolate = new WeightedQuickUnionUF(n * n + 2);
+        fill = new WeightedQuickUnionUF(n * n + 2);
     }
 
     public void open(int row, int col) { // open site (row, col) if it is not
@@ -42,27 +44,32 @@ public class Percolation {
         // check upper site, if open - connect
         int p = r * n + c;
         if (row == 1) {
-            uf.union(p, top);
+            percolate.union(p, top);
+            fill.union(p, top);
         } else if (isOpen(row - 1, col)) {
             int q = (r - 1) * n + c;
-            uf.union(p, q);
+            percolate.union(p, q);
+            fill.union(p, q);
         }
         // lower
         if (row == n) {
-            uf.union(p, bottom);
+            percolate.union(p, bottom);
         } else if (isOpen(row + 1, col)) {
             int q = (r + 1) * n + c;
-            uf.union(p, q);
+            percolate.union(p, q);
+            fill.union(p, q);
         }
         // left
         if ((col > 1 && isOpen(row, col - 1))) {
             int q = r * n + c - 1;
-            uf.union(p, q);
+            percolate.union(p, q);
+            fill.union(p, q);
         }
         // right
         if ((col < n && isOpen(row, col + 1))) {
             int q = r * n + c + 1;
-            uf.union(p, q);
+            percolate.union(p, q);
+            fill.union(p, q);
         }
     }
 
@@ -80,7 +87,7 @@ public class Percolation {
 
         int q = (row - 1) * n + col - 1;
 
-        return uf.connected(top, q);
+        return fill.connected(top, q);
     }
 
     public int numberOfOpenSites() { // number of open sites
@@ -88,7 +95,7 @@ public class Percolation {
     }
 
     public boolean percolates() { // does the system percolate?
-        return uf.connected(top, bottom);
+        return percolate.connected(top, bottom);
     }
 
     @Override
