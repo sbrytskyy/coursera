@@ -26,8 +26,7 @@ public class PercolationTest {
         Percolation perc = new Percolation(n);
         StdOut.println(perc.toString());
 
-        int steps = 0;
-        while (!in.isEmpty()/* && steps++ < expectedNumberOfOpenSites*/) {
+        while (!in.isEmpty()) {
             int i = in.readInt();
             int j = in.readInt();
             perc.open(i, j);
@@ -36,7 +35,7 @@ public class PercolationTest {
         StdOut.println(perc.toString());
         int numberOfOpenSites = perc.numberOfOpenSites();
         StdOut.println("numberOfOpenSites: " + numberOfOpenSites);
-//        assert numberOfOpenSites == expectedNumberOfOpenSites;
+        assert numberOfOpenSites == expectedNumberOfOpenSites;
         assert perc.isFull(isFullRow, isFullCol) == expected;
     }
 }
