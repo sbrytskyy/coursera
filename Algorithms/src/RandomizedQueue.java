@@ -29,7 +29,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     public void enqueue(Item item) { // add the item
         if (item == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
 
         Node node = new Node();
@@ -143,7 +143,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         dq.enqueue("8");
 
         printDeque(dq);
-        
+
         String s = dq.sample();
         System.out.println(s);
         s = dq.sample();

@@ -27,7 +27,7 @@ public class Deque<Item> implements Iterable<Item> {
 
     public void addFirst(Item item) { // add the item to the front
         if (item == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
 
         Node node = new Node();
@@ -46,7 +46,7 @@ public class Deque<Item> implements Iterable<Item> {
 
     public void addLast(Item item) { // add the item to the end
         if (item == null) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
         }
 
         Node node = new Node();
@@ -137,7 +137,6 @@ public class Deque<Item> implements Iterable<Item> {
         public void remove() {
             throw new UnsupportedOperationException();
         }
-
     }
 
     public Iterator<Item> iterator() {
@@ -165,15 +164,6 @@ public class Deque<Item> implements Iterable<Item> {
         System.out.println("first: " + i);
         printDeque(dq);
 
-        i = dq.removeLast();
-        System.out.println("last: " + i);
-
-        printDeque(dq);
-
-        i = dq.removeFirst();
-        System.out.println("first: " + i);
-        i = dq.removeFirst();
-        System.out.println("first: " + i);
         i = dq.removeLast();
         System.out.println("last: " + i);
 
