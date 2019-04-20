@@ -9,11 +9,11 @@ public class PercolationTest {
 
     private static void test() {
         // test("resources/input_sb1.txt", 55, 9, 1);
-        test("resources/greeting57.txt", 2526, 1, 6, true);
-        test("resources/input6.txt", 1, 1, 6, true);
-        test("resources/input3.txt", 4, 3, 1, true);
-        test("resources/input10.txt", 56, 9, 1, false);
-        test("resources/input20.txt", 250, 18, 1, false);
+        test("resources/percolation/greeting57.txt", 2526, 1, 6, true);
+        test("resources/percolation/input6.txt", 1, 1, 6, true);
+        test("resources/percolation/input3.txt", 4, 3, 1, true);
+        test("resources/percolation/input10.txt", 56, 9, 1, false);
+        test("resources/percolation/input20.txt", 250, 18, 1, false);
     }
 
 
