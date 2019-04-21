@@ -13,15 +13,14 @@ public class Permutation {
             RandomizedQueue<String> rq = new RandomizedQueue<>();
 
             String line = null;
-            do {
+            while (!StdIn.isEmpty()) {
                 try {
                     line = StdIn.readString();
                     rq.enqueue(line);
                 } catch (NoSuchElementException e) {
                     line = null;
                 }
-
-            } while (line != null);
+            }
 
             Iterator<String> it = rq.iterator();
             for (int i = 0; i < k; i++) {

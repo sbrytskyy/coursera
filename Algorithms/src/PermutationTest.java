@@ -3,6 +3,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
@@ -10,7 +11,7 @@ public class PermutationTest {
 
     public static void main(String[] args) {
         test();
-        testRandom();
+//        testRandom();
     }
 
     private static void testRandom() {
@@ -35,15 +36,12 @@ public class PermutationTest {
             RandomizedQueue<String> rq = new RandomizedQueue<>();
 
             String line = null;
-            do {
-                try {
-                    line = in.readString();
-                    rq.enqueue(line);
-                } catch (NoSuchElementException e) {
-                    line = null;
-                }
-
-            } while (line != null);
+            int counter = k;
+            while (counter > 0) {
+                counter--;
+                line = in.readString();
+                rq.enqueue(line);
+            }
 
             while (trials-- > 0) {
                 Iterator<String> it = rq.iterator();
