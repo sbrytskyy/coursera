@@ -12,7 +12,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private class Node {
         private Item item;
-        private Node prev;
         private Node next;
     }
 
@@ -40,7 +39,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             last = node;
         } else {
             node.next = first;
-            first.prev = node;
             first = node;
         }
         size++;
@@ -51,21 +49,48 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new NoSuchElementException();
         }
 
-        Item item = last.item;
+        int uniform = StdRandom.uniform(size);
+
+        Node node = first;
+        Node prev = null;
+        while (uniform > 0) {
+            uniform--;
+            prev = node;
+            node = node.next;
+        }
+
+        Item item = node.item;
         if (size == 1) {
             first.next = null;
             last = first;
         } else {
-            Node newLast = last.prev;
-            newLast.next = null;
-            last = newLast;
+            if (node == last) {
+                last = prev;
+            }
+            if (node == first) {
+                first = node.next;
+            } else {
+                prev.next = node.next;
+            }
         }
         size--;
         return item;
     }
 
     public Item sample() { // return (but do not remove) a random item
-        return iterator().next();
+        if (size == 0) {
+            throw new NoSuchElementException();
+        }
+
+        int uniform = StdRandom.uniform(size);
+
+        Node node = first;
+        while (uniform > 0) {
+            uniform--;
+            node = node.next;
+        }
+
+        return node.item;
     }
 
     private class RandomizedQueueIterator implements Iterator<Item> {
@@ -154,6 +179,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         System.out.println(s);
         s = dq.sample();
         System.out.println(s);
+        
+        for (int i = 0; i < 8; i++) {
+            s = dq.dequeue();
+            System.out.println(i + ":" + s);
+        }
     }
 
     private static void printDeque(RandomizedQueue<String> dq) {
