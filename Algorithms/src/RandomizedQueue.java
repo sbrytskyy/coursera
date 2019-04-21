@@ -5,15 +5,11 @@ import edu.princeton.cs.algs4.StdRandom;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
-    private Node first = null;
-    private Node last = null;
-
+    private int capacity = 32;
+    private Item[] items = (Item[]) new Object[capacity];
+    private int head = 0;
+    private int tail = 0;
     private int size = 0;
-
-    private class Node {
-        private Item item;
-        private Node next;
-    }
 
     public RandomizedQueue() { // construct an empty randomized queue
     }
@@ -31,17 +27,23 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new IllegalArgumentException();
         }
 
-        Node node = new Node();
-        node.item = item;
-
-        if (size == 0) {
-            first = node;
-            last = node;
-        } else {
-            node.next = first;
-            first = node;
+        if (tail == capacity) {
+            resize();
         }
+        items[tail++] = item;
         size++;
+    }
+    
+    private void resize() {
+        capacity *= 2;
+        Item[] newItems = (Item[]) new Object[capacity];
+        int newIndex = 0;
+        for (int i = head; i < tail; i++) {
+            newItems[newIndex++] = items[i];
+        }
+        items = newItems;
+        head = 0;
+        tail = newIndex;
     }
 
     public Item dequeue() { // remove and return a random item
@@ -50,29 +52,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
 
         int uniform = StdRandom.uniform(size);
-
-        Node node = first;
-        Node prev = null;
-        while (uniform > 0) {
-            uniform--;
-            prev = node;
-            node = node.next;
-        }
-
-        Item item = node.item;
-        if (size == 1) {
-            first.next = null;
-            last = first;
-        } else {
-            if (node == last) {
-                last = prev;
-            }
-            if (node == first) {
-                first = node.next;
-            } else {
-                prev.next = node.next;
-            }
-        }
+        int index = head + uniform;
+        
+        Item item = items[index];
+        items[index] = items[head++];
+        
         size--;
         return item;
     }
@@ -83,34 +67,18 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
 
         int uniform = StdRandom.uniform(size);
-
-        Node node = first;
-        while (uniform > 0) {
-            uniform--;
-            node = node.next;
-        }
-
-        return node.item;
+        int index = head + uniform;
+        
+        Item item = items[index];
+        return item;
     }
 
     private class RandomizedQueueIterator implements Iterator<Item> {
 
         private int current = -1;
-        private Item[] items;
-
+        private int[] indices = StdRandom.permutation(size);
+        
         public RandomizedQueueIterator() {
-            if (size > 0) {
-                int[] x = StdRandom.permutation(size);
-                items = (Item[]) new Object[size];
-
-                Node node = first;
-                int i = 0;
-                while (node != null) {
-                    items[x[i]] = node.item;
-                    i++;
-                    node = node.next;
-                }
-            }
         }
 
         @Override
@@ -132,14 +100,14 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             }
             if (current == -1) {
                 current = 0;
-                return items[current];
+                return items[indices[current] + head];
             }
             if (current == size - 1) {
                 throw new NoSuchElementException();
             }
 
             current++;
-            return items[current];
+            return items[indices[current] + head];
         }
 
         @Override
@@ -179,7 +147,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         System.out.println(s);
         s = dq.sample();
         System.out.println(s);
-        
+
         for (int i = 0; i < 8; i++) {
             s = dq.dequeue();
             System.out.println(i + ":" + s);
