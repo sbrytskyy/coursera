@@ -25,8 +25,8 @@ public class PermutationTest {
 
     private static void test() {
         test("resources/queues/test1.txt", 2, 5);
-        // test("resources/queues/distinct.txt", 3);
-        // test("resources/queues/duplicates.txt", 8);
+         test("resources/queues/distinct.txt", 3, 5);
+         test("resources/queues/duplicates.txt", 8, 5);
     }
 
     private static void test(String filename, int k, int trials) {
@@ -36,9 +36,7 @@ public class PermutationTest {
             RandomizedQueue<String> rq = new RandomizedQueue<>();
 
             String line = null;
-            int counter = k;
-            while (counter > 0) {
-                counter--;
+            while (!in.isEmpty()) {
                 line = in.readString();
                 rq.enqueue(line);
             }

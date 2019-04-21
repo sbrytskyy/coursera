@@ -5,13 +5,13 @@ import edu.princeton.cs.algs4.StdRandom;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
-    private int capacity = 32;
-    private Item[] items = (Item[]) new Object[capacity];
+    private Item[] items;
     private int head = 0;
     private int tail = 0;
     private int size = 0;
 
     public RandomizedQueue() { // construct an empty randomized queue
+        items = (Item[]) new Object[2];
     }
 
     public boolean isEmpty() { // is the queue empty?
@@ -27,7 +27,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new IllegalArgumentException();
         }
 
-        if (tail == capacity) {
+        if (tail == items.length) {
             resize();
         }
         items[tail++] = item;
@@ -35,8 +35,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
     
     private void resize() {
-        capacity *= 2;
-        Item[] newItems = (Item[]) new Object[capacity];
+        Item[] newItems = (Item[]) new Object[items.length * 2];
         int newIndex = 0;
         for (int i = head; i < tail; i++) {
             newItems[newIndex++] = items[i];
@@ -76,7 +75,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     private class RandomizedQueueIterator implements Iterator<Item> {
 
         private int current = -1;
-        private int[] indices = StdRandom.permutation(size);
+        private final int[] indices = StdRandom.permutation(size);
         
         public RandomizedQueueIterator() {
         }
