@@ -1,4 +1,5 @@
 package com.sb.algs;
+
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
@@ -10,13 +11,12 @@ public class PercolationTest {
 
     private static void test() {
         // test("resources/input_sb1.txt", 55, 9, 1);
-        test("resources/greeting57.txt", 2526, 1, 6, true);
-        test("resources/input6.txt", 1, 1, 6, true);
-        test("resources/input3.txt", 4, 3, 1, true);
-        test("resources/input10.txt", 56, 9, 1, false);
-        test("resources/input20.txt", 250, 18, 1, false);
+        test("resources/percolation/greeting57.txt", 2522, 1, 6, true);
+        test("resources/percolation/input6.txt", 18, 1, 6, true);
+        test("resources/percolation/input3.txt", 6, 3, 1, true);
+        test("resources/percolation/input10.txt", 56, 9, 1, false);
+        test("resources/percolation/input20.txt", 250, 18, 1, false);
     }
-
 
     private static void test(String filename, int expectedNumberOfOpenSites, int isFullRow, int isFullCol,
             boolean expected) {
@@ -27,8 +27,7 @@ public class PercolationTest {
         Percolation perc = new Percolation(n);
         StdOut.println(perc.toString());
 
-        int steps = 0;
-        while (!in.isEmpty()/* && steps++ < expectedNumberOfOpenSites*/) {
+        while (!in.isEmpty()) {
             int i = in.readInt();
             int j = in.readInt();
             perc.open(i, j);
@@ -37,7 +36,7 @@ public class PercolationTest {
         StdOut.println(perc.toString());
         int numberOfOpenSites = perc.numberOfOpenSites();
         StdOut.println("numberOfOpenSites: " + numberOfOpenSites);
-//        assert numberOfOpenSites == expectedNumberOfOpenSites;
+        assert numberOfOpenSites == expectedNumberOfOpenSites;
         assert perc.isFull(isFullRow, isFullCol) == expected;
     }
 }
