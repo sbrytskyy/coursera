@@ -1,9 +1,7 @@
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
@@ -11,7 +9,7 @@ public class PermutationTest {
 
     public static void main(String[] args) {
         test();
-//        testRandom();
+        // testRandom();
     }
 
     private static void testRandom() {
@@ -25,8 +23,8 @@ public class PermutationTest {
 
     private static void test() {
         test("resources/queues/test1.txt", 2, 5);
-         test("resources/queues/distinct.txt", 3, 5);
-         test("resources/queues/duplicates.txt", 8, 5);
+        test("resources/queues/distinct.txt", 3, 5);
+        test("resources/queues/duplicates.txt", 8, 5);
     }
 
     private static void test(String filename, int k, int trials) {
