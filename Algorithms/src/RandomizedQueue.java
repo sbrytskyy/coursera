@@ -6,7 +6,6 @@ import edu.princeton.cs.algs4.StdRandom;
 public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private Item[] items;
-    private int head = 0;
     private int tail = 0;
     private int size = 0;
 
@@ -39,16 +38,15 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new NoSuchElementException();
         }
 
-        int uniform = StdRandom.uniform(size);
-        int index = head + uniform;
+        int index = StdRandom.uniform(size);
 
         Item item = items[index];
-        items[index] = items[head];
-        items[head] = null;
-        head++;
+        items[index] = items[tail - 1];
+        items[tail - 1] = null;
+        tail--;
 
         size--;
-        if (size < items.length / 2) {
+        if (size < items.length / 4) {
             shrink();
         }
         return item;
@@ -59,8 +57,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             throw new NoSuchElementException();
         }
 
-        int uniform = StdRandom.uniform(size);
-        int index = head + uniform;
+        int index = StdRandom.uniform(size);
 
         Item item = items[index];
         return item;
@@ -93,14 +90,14 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             }
             if (current == -1) {
                 current = 0;
-                return items[indices[current] + head];
+                return items[indices[current]];
             }
             if (current == size - 1) {
                 throw new NoSuchElementException();
             }
 
             current++;
-            return items[indices[current] + head];
+            return items[indices[current]];
         }
 
         @Override
@@ -126,13 +123,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
     private void resize(int newSize) {
         Item[] newItems = (Item[]) new Object[newSize];
-        int newIndex = 0;
-        for (int i = head; i < tail; i++) {
-            newItems[newIndex++] = items[i];
+        int i = 0;
+        for (; i < tail; i++) {
+            newItems[i] = items[i];
         }
         items = newItems;
-        head = 0;
-        tail = newIndex;
+        tail = i;
     }
 
     public static void main(String[] args) { // unit testing (optional)
