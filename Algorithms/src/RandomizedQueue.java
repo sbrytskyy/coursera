@@ -28,21 +28,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         }
 
         if (tail == items.length) {
-            resize();
+            expand();
         }
         items[tail++] = item;
         size++;
-    }
-    
-    private void resize() {
-        Item[] newItems = (Item[]) new Object[items.length * 2];
-        int newIndex = 0;
-        for (int i = head; i < tail; i++) {
-            newItems[newIndex++] = items[i];
-        }
-        items = newItems;
-        head = 0;
-        tail = newIndex;
     }
 
     public Item dequeue() { // remove and return a random item
@@ -52,11 +41,16 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         int uniform = StdRandom.uniform(size);
         int index = head + uniform;
-        
+
         Item item = items[index];
-        items[index] = items[head++];
-        
+        items[index] = items[head];
+        items[head] = null;
+        head++;
+
         size--;
+        if (size < items.length / 2) {
+            shrink();
+        }
         return item;
     }
 
@@ -67,7 +61,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         int uniform = StdRandom.uniform(size);
         int index = head + uniform;
-        
+
         Item item = items[index];
         return item;
     }
@@ -76,7 +70,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
         private int current = -1;
         private final int[] indices = StdRandom.permutation(size);
-        
+
         public RandomizedQueueIterator() {
         }
 
@@ -120,6 +114,25 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         return it; // return an independent iterator over
                    // items in random order
 
+    }
+
+    private void expand() {
+        resize(items.length * 2);
+    }
+
+    private void shrink() {
+        resize(items.length / 2);
+    }
+
+    private void resize(int newSize) {
+        Item[] newItems = (Item[]) new Object[newSize];
+        int newIndex = 0;
+        for (int i = head; i < tail; i++) {
+            newItems[newIndex++] = items[i];
+        }
+        items = newItems;
+        head = 0;
+        tail = newIndex;
     }
 
     public static void main(String[] args) { // unit testing (optional)
