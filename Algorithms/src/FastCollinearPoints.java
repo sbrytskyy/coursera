@@ -1,104 +1,106 @@
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 public class FastCollinearPoints {
 
-	private List<LineSegment> arr = new ArrayList<>();
+    private final List<LineSegment> segmentsList = new ArrayList<>();
 
-	private class Item implements Comparable<Item> {
+    public FastCollinearPoints(Point[] points) { // finds all line segments
+                                                 // containing 4 or more points
 
-		private double slope;
-		private Point p;
+        verifyPoints(points);
 
-		public int compareTo(Item that) {
-			if (slope > that.slope) {
-				return 1;
-			} else if (slope < that.slope) {
-				return -1;
-			}
-			return 0;
-		}
-	}
+        Point[] aux = Arrays.copyOf(points, points.length);
 
-	public FastCollinearPoints(Point[] points) { // finds all line segments
-													// containing 4 or more points
+        for (int i = 0; i < points.length; i++) {
+            Point start = points[i];
 
-		if (points == null) {
-			throw new NullPointerException();
-		}
+            Arrays.sort(aux);
+            Arrays.sort(aux, start.slopeOrder());
 
-		int len = points.length;
+//            System.out.println("\nStart point: " + start);
+//            for (Point point : aux) {
+//                System.out.println(point + ", " + start.slopeTo(point));
+//            }
+//            System.out.println();
 
-		for (int ip = 0; ip < len - 1; ip++) {
-			Point p = points[ip];
-			if (p == null) {
-				throw new IllegalArgumentException();
-			}
+            int counter = 1;
+            Point end = aux[1]; // aux[0] should be the same as start
+            Double slopeRef = start.slopeTo(end);
+            
+            Point point = end;
+            Point min = start.compareTo(point) < 0 ? start : point;
+            Point max = start.compareTo(point) > 0 ? start : point;
 
-			List<Item> items = new ArrayList<>();
+            for (int ai = 2; ai < aux.length; ai++) {
+                point = aux[ai];
+                Double slope = start.slopeTo(point);
+                if (Double.compare(slope, slopeRef) == 0) {
+                    if (point.compareTo(min) < 0) {
+                        min = point;
+                    } else if (point.compareTo(max) > 0) {
+                        max = point;
+                    }
+                    end = point;
+                    counter++;
+//                    System.out.println("Points on the same line: " + start + " and " + point);
+                } else {
+                    if (counter >= 3) {
+//                        System.out.println("!!! Points: " + start  + " : " + end + " : " + min + " : " + max);
+                        if (start.compareTo(min) == 0 && end.compareTo(max) == 0) {
+                            LineSegment lineSegment = new LineSegment(start, end);
+//                            System.out.println("Points: " + min + " : " + max);
+//                            System.out.println("<<<New segment: " + lineSegment);
+                            segmentsList.add(lineSegment);
+                        }
+                    }
+                    slopeRef = slope;
+                    counter = 1;
+                    
+                    min = start.compareTo(point) < 0 ? start : point;
+                    max = start.compareTo(point) > 0 ? start : point;
+                    end = point;
+                }
+            }
+            if (counter >= 3) {
+//                System.out.println("!!! Points: " + start  + " : " + end + " : " + min + " : " + max);
+                if (start.compareTo(min) == 0 && end.compareTo(max) == 0) {
+                    LineSegment lineSegment = new LineSegment(start, end);
+//                    System.out.println("Points: " + min + " : " + max);
+//                    System.out.println("<<<New segment: " + lineSegment);
+                    segmentsList.add(lineSegment);
+                }
+            }
+        }
+    }
 
-			for (int iq = ip + 1; iq < len; iq++) {
-				Point q = points[iq];
-				if (q == null) {
-					throw new NullPointerException();
-				}
-				if (q.compareTo(p) == 0) {
-					throw new IllegalArgumentException();
-				}
+    private void verifyPoints(Point[] points) {
+        if (points == null || points.length < 4) {
+            throw new IllegalArgumentException();
+        }
 
-				double slopePQ = p.slopeTo(q);
-				Item item = new Item();
-				item.slope = slopePQ;
-				item.p = q;
-				items.add(item);
-			}
-			Collections.sort(items);
+        Point start = points[0];
+        if (start == null) {
+            throw new IllegalArgumentException();
+        }
 
-			List<Point> l = new ArrayList<>();
+        for (int iq = 1; iq < points.length; iq++) {
+            Point q = points[iq];
+            if (q == null) {
+                throw new IllegalArgumentException();
+            }
+            if (q.compareTo(start) == 0) {
+                throw new IllegalArgumentException();
+            }
+        }
+    }
 
-			int counter = 0;
-			for (int i = 1; i < items.size(); i++) {
-				Item itemPrev = items.get(i - 1);
-				Item item = items.get(i);
-				if (Double.compare(item.slope, itemPrev.slope) == 0) {
-					if (l.isEmpty()) {
-						l.add(itemPrev.p);
-						counter++;
-					}
-					l.add(item.p);
-					counter++;
-				} else {
-					if (counter >= 3) {
-						l.add(p);
-						LineSegment seg = createSegment(l);
-						arr.add(seg);
-					}
-					counter = 0;
-					l = new ArrayList<>();
-				}
-			}
-			if (counter >= 3) {
-				l.add(p);
-				LineSegment seg = createSegment(l);
-				arr.add(seg);
-			}
-		}
-	}
+    public int numberOfSegments() { // the number of line segments
+        return segmentsList.size();
+    }
 
-	private LineSegment createSegment(List<Point> l) {
-		Collections.sort(l);
-		Point p1 = l.get(0);
-		Point p2 = l.get(l.size() - 1);
-
-		return new LineSegment(p1, p2);
-	}
-
-	public int numberOfSegments() { // the number of line segments
-		return arr.size();
-	}
-
-	public LineSegment[] segments() { // the line segments
-		return arr.toArray(new LineSegment[arr.size()]);
-	}
+    public LineSegment[] segments() { // the line segments
+        return segmentsList.toArray(new LineSegment[segmentsList.size()]);
+    }
 }
