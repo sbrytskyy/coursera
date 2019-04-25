@@ -19,23 +19,17 @@ public class FastCollinearPoints {
             Arrays.sort(aux);
             Arrays.sort(aux, start.slopeOrder());
 
-//            System.out.println("\nStart point: " + start);
-//            for (Point point : aux) {
-//                System.out.println(point + ", " + start.slopeTo(point));
-//            }
-//            System.out.println();
-
             int counter = 1;
             Point end = aux[1]; // aux[0] should be the same as start
-            Double slopeRef = start.slopeTo(end);
-            
+            double slopeRef = start.slopeTo(end);
+
             Point point = end;
             Point min = start.compareTo(point) < 0 ? start : point;
             Point max = start.compareTo(point) > 0 ? start : point;
 
             for (int ai = 2; ai < aux.length; ai++) {
                 point = aux[ai];
-                Double slope = start.slopeTo(point);
+                double slope = start.slopeTo(point);
                 if (Double.compare(slope, slopeRef) == 0) {
                     if (point.compareTo(min) < 0) {
                         min = point;
@@ -44,31 +38,24 @@ public class FastCollinearPoints {
                     }
                     end = point;
                     counter++;
-//                    System.out.println("Points on the same line: " + start + " and " + point);
                 } else {
                     if (counter >= 3) {
-//                        System.out.println("!!! Points: " + start  + " : " + end + " : " + min + " : " + max);
                         if (start.compareTo(min) == 0 && end.compareTo(max) == 0) {
                             LineSegment lineSegment = new LineSegment(start, end);
-//                            System.out.println("Points: " + min + " : " + max);
-//                            System.out.println("<<<New segment: " + lineSegment);
                             segmentsList.add(lineSegment);
                         }
                     }
                     slopeRef = slope;
                     counter = 1;
-                    
+
                     min = start.compareTo(point) < 0 ? start : point;
                     max = start.compareTo(point) > 0 ? start : point;
                     end = point;
                 }
             }
             if (counter >= 3) {
-//                System.out.println("!!! Points: " + start  + " : " + end + " : " + min + " : " + max);
                 if (start.compareTo(min) == 0 && end.compareTo(max) == 0) {
                     LineSegment lineSegment = new LineSegment(start, end);
-//                    System.out.println("Points: " + min + " : " + max);
-//                    System.out.println("<<<New segment: " + lineSegment);
                     segmentsList.add(lineSegment);
                 }
             }
@@ -76,7 +63,7 @@ public class FastCollinearPoints {
     }
 
     private void verifyPoints(Point[] points) {
-        if (points == null || points.length < 4) {
+        if (points == null || (points.length == 1 && points[0] == null)) {
             throw new IllegalArgumentException();
         }
 
