@@ -9,9 +9,23 @@ public class FastCollinearPoints {
     public FastCollinearPoints(Point[] points) { // finds all line segments
                                                  // containing 4 or more points
 
-        verifyPoints(points);
+        if (points == null) {
+            throw new IllegalArgumentException();
+        }
+
+        for (Point point : points) {
+            if (point == null) {
+                throw new IllegalArgumentException();
+            }
+        }
 
         Point[] aux = Arrays.copyOf(points, points.length);
+        Arrays.sort(aux);
+        verifyDuplicates(aux);
+
+        if (points.length < 4) {
+            return;
+        }
 
         for (int i = 0; i < points.length; i++) {
             Point start = points[i];
@@ -62,22 +76,14 @@ public class FastCollinearPoints {
         }
     }
 
-    private void verifyPoints(Point[] points) {
-        if (points == null || (points.length == 1 && points[0] == null)) {
-            throw new IllegalArgumentException();
-        }
-
-        Point start = points[0];
-        if (start == null) {
-            throw new IllegalArgumentException();
-        }
-
-        for (int iq = 1; iq < points.length; iq++) {
-            Point q = points[iq];
-            if (q == null) {
+    private void verifyDuplicates(Point[] sorted) {
+        for (int i = 1; i < sorted.length; i++) {
+            Point p = sorted[i - 1];
+            Point q = sorted[i];
+            if (p == null || q == null) {
                 throw new IllegalArgumentException();
             }
-            if (q.compareTo(start) == 0) {
+            if (q.compareTo(p) == 0) {
                 throw new IllegalArgumentException();
             }
         }
