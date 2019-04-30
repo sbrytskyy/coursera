@@ -4,12 +4,12 @@ import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 
 public class Solver {
-    
+
     private class SearchNode implements Comparable<SearchNode> {
         private Board board;
         private int level = 0;
         private SearchNode prev;
-        
+
         public SearchNode(Board board, SearchNode prev) {
             super();
             this.board = board;
@@ -31,27 +31,28 @@ public class Solver {
 //            if (compare == 0) {
 //                compare = Integer.compare(this.level, that.level);
 //            }
-            
+
             int compare = (this.board.manhattan() - that.board.manhattan()) + (this.level - that.level);
 
             return compare;
         }
-        
+
         public int getLevel() {
             return level;
         }
-        
+
         public Board getBoard() {
             return board;
         }
-        
+
         public SearchNode getPrev() {
             return prev;
         }
 
         @Override
         public String toString() {
-            return "SearchNode [level=" + level + ", board=" + board + ", prev=" + (prev == null ? "NULL" : prev.getBoard()) + "]";
+            return "SearchNode [level=" + level + ", board=" + board + ", prev="
+                    + (prev == null ? "NULL" : prev.getBoard()) + "]";
         }
     }
 
@@ -67,7 +68,7 @@ public class Solver {
                                    // (using the A* algorithm)
 
         // Board previous = null;
-        
+
         SearchNode node = new SearchNode(initial, null);
         minPQ.insert(node);
 
@@ -75,22 +76,24 @@ public class Solver {
         SearchNode current = node;
         while (true) {
 
-            if (minPQ.isEmpty()) break;
-            
+            if (minPQ.isEmpty())
+                break;
+
             current = minPQ.delMin();
 //            StdOut.println(current);
             iterations++;
-            
+
             if (current.getBoard().isGoal()) {
                 solvable = true;
                 moves = current.getLevel();
-                
+
                 solution.push(current.getBoard());
-                
+
                 SearchNode sn = current;
                 while (true) {
                     sn = sn.getPrev();
-                    if (sn == null) break;
+                    if (sn == null)
+                        break;
                     solution.push(sn.getBoard());
                 }
                 break;
@@ -127,7 +130,7 @@ public class Solver {
 
     public static void main(String[] args) { // solve a slider puzzle (given
                                              // below)
-        // create initial board from file
+                                             // create initial board from file
         In in = new In(args[0]);
         int n = in.readInt();
         int[][] blocks = new int[n][n];
