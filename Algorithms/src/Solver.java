@@ -5,10 +5,16 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class Solver {
 
+    private int moves = -1;
+
+    private Stack<Board> solution = new Stack<>();
+
+    private boolean solvable;
+
     private class SearchNode implements Comparable<SearchNode> {
         private Board board;
         private int level = 0;
-        private SearchNode prev;
+        private final SearchNode prev;
 
         public SearchNode(Board board, SearchNode prev) {
             super();
@@ -56,18 +62,11 @@ public class Solver {
         }
     }
 
-    private MinPQ<SearchNode> minPQ = new MinPQ<SearchNode>();
-
-    private int moves = -1;
-
-    private Stack<Board> solution = new Stack<>();
-
-    private boolean solvable;
-
     public Solver(Board initial) { // find a solution to the initial board
                                    // (using the A* algorithm)
 
         // Board previous = null;
+        MinPQ<SearchNode> minPQ = new MinPQ<SearchNode>();
 
         SearchNode node = new SearchNode(initial, null);
         minPQ.insert(node);

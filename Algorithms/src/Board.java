@@ -6,8 +6,8 @@ public class Board {
 
     private static final boolean TEST = false;
 
-    private int dim;
-    private int[][] array;
+    private final int dim;
+    private final int[][] array;
     private int hamming;
     private int manhattan;
 
@@ -23,9 +23,10 @@ public class Board {
             throw new IllegalArgumentException();
         }
         dim = blocks[0].length;
-        if (dim * dim != blocks.length) {
-            // not square
-        }
+//        if (dim * dim != blocks.length) {
+//            // not square
+//            throw new IllegalArgumentException();
+//        }
         int len = dim * dim;
         array = new int[dim][dim];
         for (int i = 0; i < dim; i++) {
@@ -35,7 +36,7 @@ public class Board {
 
                 array[i][j] = value;
                 if (value != 0) {
-                    if ((index != len - 1 && value != index + 1) || (index == len - 1 && value != 0)) {
+                    if ((index != len - 1 && value != index + 1) || (index == len - 1)) {
                         hamming++;
                     }
 
@@ -153,7 +154,7 @@ public class Board {
     public boolean equals(Object y) { // does this board equal y?
         if (this == y)
             return true;
-        if (!(y instanceof Board))
+        if (!(y.getClass().equals(Board.class)))
             return false;
         Board b2 = (Board) y;
 
