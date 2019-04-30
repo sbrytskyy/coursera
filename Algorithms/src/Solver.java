@@ -5,7 +5,7 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class Solver {
 
-    private SearchNode finalFoard;
+    private final SearchNode finalBoard;
 
     private class SearchNode implements Comparable<SearchNode> {
 
@@ -66,7 +66,6 @@ public class Solver {
             throw new IllegalArgumentException();
         }
 
-        finalFoard = null;
         Board twin = initial.twin();
 
         MinPQ<SearchNode> minPQ = new MinPQ<SearchNode>();
@@ -87,12 +86,12 @@ public class Solver {
 //            StdOut.println(current);
 
             if (current.getBoard().isGoal()) {
-                finalFoard = current;
+                finalBoard = current;
                 break;
             }
 
             if (currentTwin.getBoard().isGoal()) {
-                finalFoard = null;
+                finalBoard = null;
                 break;
             }
 
@@ -116,12 +115,12 @@ public class Solver {
     }
 
     public boolean isSolvable() { // is the initial board solvable?
-        return finalFoard != null;
+        return finalBoard != null;
     }
 
     public int moves() { // min number of moves to solve initial board; -1 if
                          // unsolvable
-        return isSolvable() ? finalFoard.getLevel() : -1;
+        return isSolvable() ? finalBoard.getLevel() : -1;
     }
 
     public Iterable<Board> solution() { // sequence of boards in a shortest
@@ -130,13 +129,12 @@ public class Solver {
 
             Stack<Board> stack = new Stack<>();
 
-            SearchNode sn = finalFoard;
-            while (true) {
-                sn = sn.getPrev();
-                if (sn == null)
-                    break;
-                stack.push(sn.getBoard());
+            SearchNode curr = finalBoard;
+            while (curr != null) {
+                stack.push(curr.board);
+                curr = curr.prev;
             }
+
             return stack;
         }
         return null;
