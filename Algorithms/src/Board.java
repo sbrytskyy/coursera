@@ -158,7 +158,7 @@ public class Board {
         
         if (this == y)
             return true;
-        if (!(y.getClass() == Board.class))
+        if (!(y.getClass() == this.getClass()))
             return false;
         Board b2 = (Board) y;
 
