@@ -152,9 +152,13 @@ public class Board {
     }
 
     public boolean equals(Object y) { // does this board equal y?
+        if (y == null) {
+            return false;
+        }
+        
         if (this == y)
             return true;
-        if (!(y.getClass().equals(Board.class)))
+        if (!(y.getClass() == Board.class))
             return false;
         Board b2 = (Board) y;
 

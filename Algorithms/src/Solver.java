@@ -5,14 +5,14 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class Solver {
 
-    private int moves = -1;
+    private int moves;
 
-    private Stack<Board> solution = new Stack<>();
+    private final Stack<Board> solution = new Stack<>();
 
     private boolean solvable;
 
     private class SearchNode implements Comparable<SearchNode> {
-        private Board board;
+        private final Board board;
         private int level = 0;
         private final SearchNode prev;
 
