@@ -5,9 +5,10 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class Solver {
 
-    private final Stack<Board> solution;
+    private SearchNode finalFoard;
 
     private class SearchNode implements Comparable<SearchNode> {
+
         private final Board board;
         private int level = 0;
         private final SearchNode prev;
@@ -64,35 +65,34 @@ public class Solver {
         if (initial == null) {
             throw new IllegalArgumentException();
         }
-        
-        solution = new Stack<>();
-        
+
+        finalFoard = null;
+        Board twin = initial.twin();
+
         MinPQ<SearchNode> minPQ = new MinPQ<SearchNode>();
+        MinPQ<SearchNode> minPQtwin = new MinPQ<SearchNode>();
 
         SearchNode node = new SearchNode(initial, null);
         minPQ.insert(node);
 
-        int iterations = 0;
+        SearchNode nodeTwin = new SearchNode(twin, null);
+        minPQtwin.insert(nodeTwin);
+
         SearchNode current = node;
+        SearchNode currentTwin = nodeTwin;
         while (true) {
 
-            if (minPQ.isEmpty())
-                break;
-
             current = minPQ.delMin();
+            currentTwin = minPQtwin.delMin();
 //            StdOut.println(current);
-            iterations++;
 
             if (current.getBoard().isGoal()) {
-                solution.push(current.getBoard());
+                finalFoard = current;
+                break;
+            }
 
-                SearchNode sn = current;
-                while (true) {
-                    sn = sn.getPrev();
-                    if (sn == null)
-                        break;
-                    solution.push(sn.getBoard());
-                }
+            if (currentTwin.getBoard().isGoal()) {
+                finalFoard = null;
                 break;
             }
 
@@ -104,25 +104,42 @@ public class Solver {
                     minPQ.insert(n);
                 }
             }
-
-            if (iterations > 1000) {
-                break;
+            Iterable<Board> neighborsTwin = currentTwin.getBoard().neighbors();
+            for (Board board : neighborsTwin) {
+                if (currentTwin.getPrev() == null || !board.equals(currentTwin.getPrev().getBoard())) {
+                    SearchNode n = new SearchNode(board, currentTwin);
+//                    StdOut.println("\t" + board);
+                    minPQtwin.insert(n);
+                }
             }
         }
     }
 
     public boolean isSolvable() { // is the initial board solvable?
-        return !solution.isEmpty();
+        return finalFoard != null;
     }
 
     public int moves() { // min number of moves to solve initial board; -1 if
                          // unsolvable
-        return isSolvable() ? solution.size() - 1 : -1;
+        return isSolvable() ? finalFoard.getLevel() : -1;
     }
 
     public Iterable<Board> solution() { // sequence of boards in a shortest
                                         // solution; null if unsolvable
-        return isSolvable() ? solution : null;
+        if (isSolvable()) {
+
+            Stack<Board> stack = new Stack<>();
+
+            SearchNode sn = finalFoard;
+            while (true) {
+                sn = sn.getPrev();
+                if (sn == null)
+                    break;
+                stack.push(sn.getBoard());
+            }
+            return stack;
+        }
+        return null;
     }
 
     public static void main(String[] args) { // solve a slider puzzle (given

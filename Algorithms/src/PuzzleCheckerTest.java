@@ -5,9 +5,17 @@ import edu.princeton.cs.algs4.StdOut;
 public class PuzzleCheckerTest {
 
     public static void main(String[] args) {
+        test("resources/8puzzle/puzzle00.txt");
         test("resources/8puzzle/puzzle05.txt");
+        test("resources/8puzzle/puzzle14.txt");
+        test("resources/8puzzle/puzzle15.txt");
+        test("resources/8puzzle/puzzle16.txt");
+        test("resources/8puzzle/puzzle17.txt");
+        test("resources/8puzzle/puzzle18.txt");
+        test("resources/8puzzle/puzzle19.txt");
         test("resources/8puzzle/puzzle20.txt");
         test("resources/8puzzle/puzzle21.txt");
+        test("resources/8puzzle/puzzle22.txt");
     }
 
     public static void test(String filename) {
@@ -23,7 +31,7 @@ public class PuzzleCheckerTest {
 
         // solve the slider puzzle
         Board initial = new Board(tiles);
-        StdOut.println(initial);
+//        StdOut.println(initial);
 
 //        Board twin = initial.twin();
 //        StdOut.println(twin);
