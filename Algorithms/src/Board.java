@@ -23,12 +23,9 @@ public class Board {
             throw new IllegalArgumentException();
         }
         dim = blocks[0].length;
-//        if (dim * dim != blocks.length) {
-//            // not square
-//            throw new IllegalArgumentException();
-//        }
         int len = dim * dim;
         array = new int[dim][dim];
+
         for (int i = 0; i < dim; i++) {
             for (int j = 0; j < dim; j++) {
                 int index = i * dim + j;
@@ -155,7 +152,7 @@ public class Board {
         if (y == null) {
             return false;
         }
-        
+
         if (this == y)
             return true;
         if (!(y.getClass() == this.getClass()))

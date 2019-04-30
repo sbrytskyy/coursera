@@ -6,6 +6,8 @@ public class PuzzleCheckerTest {
 
     public static void main(String[] args) {
         test("resources/8puzzle/puzzle05.txt");
+        test("resources/8puzzle/puzzle20.txt");
+        test("resources/8puzzle/puzzle21.txt");
     }
 
     public static void test(String filename) {
@@ -21,6 +23,11 @@ public class PuzzleCheckerTest {
 
         // solve the slider puzzle
         Board initial = new Board(tiles);
+        StdOut.println(initial);
+
+//        Board twin = initial.twin();
+//        StdOut.println(twin);
+        
         Solver solver = new Solver(initial);
         StdOut.println(filename + ": " + solver.moves());
     }

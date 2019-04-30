@@ -5,11 +5,7 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class Solver {
 
-    private int moves;
-
-    private final Stack<Board> solution = new Stack<>();
-
-    private boolean solvable;
+    private final Stack<Board> solution;
 
     private class SearchNode implements Comparable<SearchNode> {
         private final Board board;
@@ -65,7 +61,12 @@ public class Solver {
     public Solver(Board initial) { // find a solution to the initial board
                                    // (using the A* algorithm)
 
-        // Board previous = null;
+        if (initial == null) {
+            throw new IllegalArgumentException();
+        }
+        
+        solution = new Stack<>();
+        
         MinPQ<SearchNode> minPQ = new MinPQ<SearchNode>();
 
         SearchNode node = new SearchNode(initial, null);
@@ -83,9 +84,6 @@ public class Solver {
             iterations++;
 
             if (current.getBoard().isGoal()) {
-                solvable = true;
-                moves = current.getLevel();
-
                 solution.push(current.getBoard());
 
                 SearchNode sn = current;
@@ -114,17 +112,17 @@ public class Solver {
     }
 
     public boolean isSolvable() { // is the initial board solvable?
-        return solvable;
+        return !solution.isEmpty();
     }
 
     public int moves() { // min number of moves to solve initial board; -1 if
                          // unsolvable
-        return solvable ? moves : -1;
+        return isSolvable() ? solution.size() - 1 : -1;
     }
 
     public Iterable<Board> solution() { // sequence of boards in a shortest
                                         // solution; null if unsolvable
-        return solvable ? solution : null;
+        return isSolvable() ? solution : null;
     }
 
     public static void main(String[] args) { // solve a slider puzzle (given
