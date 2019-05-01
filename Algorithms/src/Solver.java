@@ -12,10 +12,12 @@ public class Solver {
         private final Board board;
         private int level = 0;
         private final SearchNode prev;
+        private final int manhattan;
 
         public SearchNode(Board board, SearchNode prev) {
             super();
             this.board = board;
+            manhattan = board.manhattan();
             this.prev = prev;
             if (prev != null) {
                 this.level = prev.getLevel() + 1;
@@ -35,7 +37,7 @@ public class Solver {
 //                compare = Integer.compare(this.level, that.level);
 //            }
 
-            int compare = (this.board.manhattan() - that.board.manhattan()) + (this.level - that.level);
+            int compare = (this.manhattan - that.manhattan) + (this.level - that.level);
 
             return compare;
         }
