@@ -57,11 +57,11 @@ public class KdTree {
         if (p == null)
             throw new IllegalArgumentException();
 
-        size++;
-
         Node node = new Node(p);
         if (root == null) {
             root = node;
+            size++;
+
             return;
         }
 
@@ -73,12 +73,14 @@ public class KdTree {
         if (node.compareTo(newNode) < 0) {
             if (node.left == null) {
                 node.left = newNode;
+                size++;
             } else {
                 addNode(node.left, newNode);
             }
         } else if (node.compareTo(newNode) > 0) {
             if (node.right == null) {
                 node.right = newNode;
+                size++;
             } else {
                 addNode(node.right, newNode);
             }
