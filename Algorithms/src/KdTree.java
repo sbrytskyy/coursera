@@ -177,13 +177,18 @@ public class KdTree {
         if (node == null) {
             return;
         }
+        
         Point2D p = node.point;
         if (rect.contains(p)) {
             result.add(p);
         }
 
-        verifyRange(node.left, rect, result);
-        verifyRange(node.right, rect, result);
+        if (node.left != null && node.left.rect.intersects(rect)) {
+            verifyRange(node.left, rect, result);
+        }
+        if (node.right != null && node.right.rect.intersects(rect)) {
+            verifyRange(node.right, rect, result);
+        }
     }
 
     public Point2D nearest(Point2D p) { // a nearest neighbor in the set to
