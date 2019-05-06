@@ -7,11 +7,15 @@ import edu.princeton.cs.algs4.RedBlackBST;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class KdTree {
-
+    
     private RedBlackBST<Point2D, Double> tree = new RedBlackBST<>();
 
     private Point2D center = new Point2D(0.5, 0.5);
 
+    private static class Node {
+        
+    }
+    
     public KdTree() { // construct an empty set of points
 
     }
