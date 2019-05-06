@@ -7,9 +7,9 @@ import edu.princeton.cs.algs4.SET;
 import edu.princeton.cs.algs4.StdDraw;
 
 public class PointSET {
-    
-    private SET<Point2D> tree = new SET<>();
-    
+
+    private final SET<Point2D> tree = new SET<>();
+
     public PointSET() { // construct an empty set of points
 
     }
@@ -24,12 +24,14 @@ public class PointSET {
 
     public void insert(Point2D p) { // add the point to the set (if it is not
                                     // already in the set)
-        if (p == null) throw new NullPointerException();
+        if (p == null)
+            throw new IllegalArgumentException();
         tree.add(p);
     }
 
     public boolean contains(Point2D p) { // does the set contain point p?
-        if (p == null) throw new NullPointerException();
+        if (p == null)
+            throw new IllegalArgumentException();
         return tree.contains(p);
     }
 
@@ -41,26 +43,28 @@ public class PointSET {
 
     public Iterable<Point2D> range(RectHV rect) { // all points that are inside
                                                   // the rectangle
-        if (rect == null) throw new NullPointerException();
+        if (rect == null)
+            throw new IllegalArgumentException();
 
-        List<Point2D> l = new ArrayList<>();
+        List<Point2D> list = new ArrayList<>();
         for (Point2D p : tree) {
             if (rect.contains(p)) {
-                l.add(p);
+                list.add(p);
             }
         }
-        return l;
+        return list;
     }
 
     public Point2D nearest(Point2D p) { // a nearest neighbor in the set to
                                         // point p; null if the set is empty
-        if (p == null) throw new NullPointerException();
+        if (p == null)
+            throw new IllegalArgumentException();
 
-        double dist = Double.MAX_VALUE;
+        double dist = Double.POSITIVE_INFINITY;
         Point2D nearest = null;
-        
+
         for (Point2D ap : tree) {
-            double d = p.distanceTo(ap);
+            double d = p.distanceSquaredTo(ap);
             if (d < dist) {
                 dist = d;
                 nearest = ap;
@@ -73,12 +77,11 @@ public class PointSET {
                                              // (optional)
 
         StdDraw.show();
-        
+
         StdDraw.clear();
         StdDraw.setPenColor(StdDraw.BLACK);
         StdDraw.setXscale(0.0, 1.0);
-        StdDraw.setYscale(0.0, 1.0);   // leave a border to write text
-
+        StdDraw.setYscale(0.0, 1.0); // leave a border to write text
 
     }
 }
