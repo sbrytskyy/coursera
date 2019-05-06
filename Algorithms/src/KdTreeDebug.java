@@ -1,11 +1,13 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
 import edu.princeton.cs.algs4.StdDraw;
 
-public class KdTree {
+public class KdTreeDebug {
 
     private Node root;
     private int size = 0;
@@ -26,9 +28,14 @@ public class KdTree {
             this.rect = rect;
             this.vertical = vertical;
         }
+
+        @Override
+        public String toString() {
+            return "Node [point=" + point + ", rect=" + rect + ", vertical=" + vertical + "]";
+        }
     }
 
-    public KdTree() { // construct an empty set of points
+    public KdTreeDebug() { // construct an empty set of points
 
     }
 
@@ -119,19 +126,23 @@ public class KdTree {
             return false;
         }
 
+        System.out.println(node.point);
+
         if (p.equals(node.point)) {
             return true;
         }
 
+        boolean result = false;
         if (node.left != null && node.left.rect.contains(p)) {
-            if (find(node.left, p)) {
-                return true;
-            }
+            result = find(node.left, p);
+        }
+        if (result) {
+            return true;
         }
         if (node.right != null) {
-            return find(node.right, p);
+            result = find(node.right, p);
         }
-        return false;
+        return result;
     }
 
     public void draw() { // draw all points to standard draw
@@ -212,6 +223,22 @@ public class KdTree {
 
         findNearest(node.left, p);
         findNearest(node.right, p);
+    }
+
+    public void print() {
+        Queue<Node> nodes = new LinkedList<>();
+        nodes.offer(root);
+
+        while (!nodes.isEmpty()) {
+            Node node = nodes.poll();
+            if (node != null) {
+                Node left = node.left;
+                Node right = node.right;
+                System.out.println("NODE: " + node + ", LEFT: " + left + ", RIGHT: " + right);
+                nodes.offer(left);
+                nodes.offer(right);
+            }
+        }
     }
 
     public static void main(String[] args) { // unit testing of the methods
