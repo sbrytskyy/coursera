@@ -10,17 +10,19 @@ public class KdTree {
     private Node root;
     private int size = 0;
 
-    private static class Node implements Comparable<Node> {
-
-        public Node(Point2D point) {
-            this.point = point;
-        }
+    private Point2D nearest;
+    private double delta;
+    
+    private static class Node {
 
         public final Point2D point;
         public Node left;
         public Node right;
 
-        @Override
+        public Node(Point2D point) {
+            this.point = point;
+        }
+
         public int compareTo(Node that) {
             if (this == that)
                 return 0;
@@ -55,15 +57,15 @@ public class KdTree {
         if (p == null)
             throw new IllegalArgumentException();
 
-        Node node = new Node(p);
+        size++;
 
+        Node node = new Node(p);
         if (root == null) {
             root = node;
             return;
         }
 
         addNode(root, node);
-        size++;
     }
 
     private void addNode(Node node, Node newNode) {
@@ -107,7 +109,9 @@ public class KdTree {
     }
 
     public void draw() { // draw all points to standard draw
-
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.setPenRadius(0.01);
+        
         drawNodes(root);
     }
 
@@ -146,9 +150,6 @@ public class KdTree {
         verifyRange(node.right, rect, result);
     }
 
-    private Point2D nearest;
-    private double delta;
-    
     public Point2D nearest(Point2D p) { // a nearest neighbor in the set to
                                         // point p; null if the set is empty
         if (p == null)
