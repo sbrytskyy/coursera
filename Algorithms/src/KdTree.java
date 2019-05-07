@@ -123,15 +123,23 @@ public class KdTree {
             return true;
         }
 
-        if (node.left != null && node.left.rect.contains(p)) {
-            if (find(node.left, p)) {
-                return true;
+        Node toSearch;
+
+        if (node.vertical) {
+            if (p.x() < node.point.x()) {
+                toSearch = node.left;
+            } else {
+                toSearch = node.right;
+            }
+        } else {
+            if (p.y() < node.point.y()) {
+                toSearch = node.left;
+            } else {
+                toSearch = node.right;
             }
         }
-        if (node.right != null) {
-            return find(node.right, p);
-        }
-        return false;
+
+        return find(toSearch, p);
     }
 
     public void draw() { // draw all points to standard draw

@@ -45,7 +45,7 @@ public class KdTreeTest {
 
     private static void test() {
 //        test("resources/kdtree/circle10.txt");
-//        testContain1();
+        testContains1();
         testRange1();
         testRange2();
         testNearest1();
