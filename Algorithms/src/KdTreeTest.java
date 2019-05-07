@@ -13,7 +13,7 @@ public class KdTreeTest {
 
     public static void main(String[] args) {
 //        visualTest();
-//        test();
+        test();
         testLoad();
     }
 
@@ -246,7 +246,7 @@ public class KdTreeTest {
         long totalX = 0;
         long totalY = 0;
 
-        int trials = 10000000;
+        int trials = 1000;
 
         for (int i = 0; i < trials; i++) {
 
