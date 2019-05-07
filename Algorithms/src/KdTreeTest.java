@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
@@ -47,9 +48,11 @@ public class KdTreeTest {
 //        testContain1();
         testRange1();
         testRange2();
+        testNearest1();
     }
 
-    private static void testContain1() {
+    private static void testContains1() {
+        System.out.println("Contains 1");
         In in = new In("resources/kdtree/random1.txt"); // input file
 
         List<Point2D> points = new ArrayList<>();
@@ -70,13 +73,13 @@ public class KdTreeTest {
 //        tree.print();
         
         Point2D p = new Point2D(0.5, 0.25);
-        System.out.println("Search");
         System.out.println(p);
         boolean contains = tree.contains(p);
         assert contains;
     }
 
     private static void testRange1() {
+        System.out.println("Range 1");
         In in = new In("resources/kdtree/input5.txt"); // input file
 
         List<Point2D> points = new ArrayList<>();
@@ -97,12 +100,12 @@ public class KdTreeTest {
 //        tree.print();
         
         RectHV rect = new RectHV(0.47, 0.18, 0.69, 0.27);
-        System.out.println("Range");
         Iterable<Point2D> range = tree.range(rect);
         assert !range.iterator().hasNext();
     }
 
     private static void testRange2() {
+        System.out.println("Range 2");
         In in = new In("resources/kdtree/input10.txt"); // input file
 
         List<Point2D> points = new ArrayList<>();
@@ -123,8 +126,85 @@ public class KdTreeTest {
 //        tree.print();
         
         RectHV rect = new RectHV(0.26, 0.19, 0.35, 0.24);
-        System.out.println("Range");
         Iterable<Point2D> range = tree.range(rect);
         assert !range.iterator().hasNext();
     }
+
+    private static void testNearest5() {
+        System.out.println("Nearest 5");
+        In in = new In("resources/kdtree/nearest5.txt"); // input file
+
+        List<Point2D> points = new ArrayList<>();
+
+        KdTree tree = new KdTree();
+
+        while (!in.isEmpty()) {
+            double x = in.readDouble();
+            double y = in.readDouble();
+
+            Point2D p = new Point2D(x, y);
+            System.out.println(p);
+
+            points.add(p);
+            tree.insert(p);
+        }
+        
+//        tree.print();
+        
+        Point2D p = new Point2D(0.75, 1.0);
+        Point2D nearest = tree.nearest(p);
+        Point2D expected = new Point2D(0.875, 0.625);
+        assert nearest.equals(expected);
+    }
+
+    private static void testNearest1() {
+        System.out.println("Nearest 1");
+        In in = new In("resources/kdtree/nearest1.txt"); // input file
+
+        List<Point2D> points = new ArrayList<>();
+
+        KdTree tree = new KdTree();
+
+        while (!in.isEmpty()) {
+            double x = in.readDouble();
+            double y = in.readDouble();
+
+            Point2D p = new Point2D(x, y);
+            System.out.println(p);
+
+            points.add(p);
+            tree.insert(p);
+        }
+        
+//        tree.print();
+        
+        Point2D p = new Point2D(0.707, 0.451);
+        Point2D nearest = tree.nearest(p);
+        Point2D expected = new Point2D(0.5, 0.4);
+        
+//        drawTreeAndPoint("resources/kdtree/nearest1.txt", p);
+        assert nearest.equals(expected);
+    }
+
+    private static void drawTreeAndPoint(String filename, Point2D p) {
+        In in = new In(filename); // input file
+
+        KdTree tree = new KdTree();
+
+        while (!in.isEmpty()) {
+            double x = in.readDouble();
+            double y = in.readDouble();
+            tree.insert(new Point2D(x, y));
+
+            tree.draw();
+            StdDraw.show();
+            StdDraw.pause(1000);
+        }
+        
+        StdDraw.setPenRadius(0.05);
+        StdDraw.setPenColor(Color.PINK);
+        p.draw();
+        StdDraw.show();
+    }
+
 }

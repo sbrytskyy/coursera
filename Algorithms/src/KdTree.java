@@ -177,7 +177,7 @@ public class KdTree {
         if (node == null) {
             return;
         }
-        
+
         Point2D p = node.point;
         if (rect.contains(p)) {
             result.add(p);
@@ -209,14 +209,43 @@ public class KdTree {
             return;
         }
 
+        if (node.point.equals(p)) {
+            nearest = node.point;
+            delta = 0.0;
+            return;
+        }
+
         double distance = node.point.distanceSquaredTo(p);
         if (Double.compare(distance, delta) < 0) {
             delta = distance;
             nearest = node.point;
         }
 
-        findNearest(node.left, p);
-        findNearest(node.right, p);
+        if (Double.compare(node.rect.distanceSquaredTo(p), delta) < 0) {
+            Node first;
+            Node second;
+
+            if (node.vertical) {
+                if (p.x() < node.point.x()) {
+                    first = node.left;
+                    second = node.right;
+                } else {
+                    first = node.right;
+                    second = node.left;
+                }
+            } else {
+                if (p.y() < node.point.y()) {
+                    first = node.left;
+                    second = node.right;
+                } else {
+                    first = node.right;
+                    second = node.left;
+                }
+            }
+
+            findNearest(first, p);
+            findNearest(second, p);
+        }
     }
 
     public static void main(String[] args) { // unit testing of the methods
