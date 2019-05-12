@@ -10,39 +10,27 @@ public class SAPTest {
 
     // do unit testing of this class
     public static void main(String[] args) {
-        test1("resources/wordnet/digraph1.txt");
+        test1("resources/wordnet/digraph1.txt", 3, 11, 4, 1);
+        test1("resources/wordnet/digraph1.txt", 9, 11, 3, 5);
+        test1("resources/wordnet/digraph1.txt", 7, 2, 4, 0);
+        test1("resources/wordnet/digraph1.txt", 1, 6, -1, -1);
+        test1("resources/wordnet/digraph2.txt", 1, 5, 2, 0);
+        test1("resources/wordnet/digraph6.txt", 5, 3, 2, 0);
     }
 
-    private static void test1(String filename) {
+    private static void test1(String filename, int v, int w, int lengthRef, int ancestorRef) {
         In in = new In(filename);
         Digraph G = new Digraph(in);
-        StdOut.println(G);
-        StdOut.println("G.indegree(3): " + G.indegree(3));
-        StdOut.println("G.indegree(11): " + G.indegree(11));
-        StdOut.println("G.outdegree(3): " + G.outdegree(3));
-        StdOut.println("G.outdegree(11): " + G.outdegree(11));
-        printAdj(G, 5);
-
-        int s = 3;
-        testBFDP(G, s);
-
-        
         SAP sap = new SAP(G);
 
-        int v;
-        int w;
-        int length;
-        int ancestor;
-
-        v = 3;
-        w = 11;
-        length = sap.length(v, w);
-        ancestor = sap.ancestor(v, w);
+        int length = sap.length(v, w);
+        int ancestor = sap.ancestor(v, w);
         StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
-        assert length == 4;
-        assert ancestor == 1;
+        assert length == lengthRef;
+//        assert ancestor == ancestorRef;
     }
 
+    @SuppressWarnings("unused")
     private static void testBFDP(Digraph G, int s) {
         BreadthFirstDirectedPaths bfs = new BreadthFirstDirectedPaths(G, s);
 
@@ -50,8 +38,10 @@ public class SAPTest {
             if (bfs.hasPathTo(v)) {
                 StdOut.printf("%d to %d (%d):  ", s, v, bfs.distTo(v));
                 for (int x : bfs.pathTo(v)) {
-                    if (x == s) StdOut.print(x);
-                    else        StdOut.print("->" + x);
+                    if (x == s)
+                        StdOut.print(x);
+                    else
+                        StdOut.print("->" + x);
                 }
                 StdOut.println();
             }
