@@ -1,5 +1,7 @@
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
@@ -7,8 +9,8 @@ import edu.princeton.cs.algs4.Topological;
 
 public class WordNet {
 
-    private final Map<Integer, String> synsetsMap = new LinkedHashMap<>();
-    private final Map<String, Integer> nounsMap = new LinkedHashMap<>();
+    private final Map<Integer, Set<String>> synsetsMap = new LinkedHashMap<>();
+    private final Map<String, Set<Integer>> nounsMap = new LinkedHashMap<>();
     private final Digraph digraph;
     private final SAP sap;
 
@@ -38,11 +40,15 @@ public class WordNet {
             counter++;
             String[] split = line.split(",");
             int synsetId = Integer.parseInt(split[0]);
-            synsetsMap.put(synsetId, split[1]);
+            Set<String> nounsSet = synsetsMap.getOrDefault(synsetId, new LinkedHashSet<>());
+            nounsSet.add(split[1]);
+            synsetsMap.put(synsetId, nounsSet);
 
             String[] nouns = split[1].split(" ");
             for (String noun : nouns) {
-                nounsMap.put(noun, synsetId);
+                Set<Integer> ids = nounsMap.getOrDefault(noun, new LinkedHashSet<>());
+                ids.add(synsetId);
+                nounsMap.put(noun, ids);
             }
         }
         return counter;
@@ -81,8 +87,8 @@ public class WordNet {
         if (!isNoun(nounA) || !isNoun(nounB)) {
             throw new IllegalArgumentException();
         }
-        int v = nounsMap.get(nounA);
-        int w = nounsMap.get(nounB);
+        Set<Integer> v = nounsMap.get(nounA);
+        Set<Integer> w = nounsMap.get(nounB);
 
         return sap.length(v, w);
     }
@@ -93,11 +99,11 @@ public class WordNet {
         if (!isNoun(nounA) || !isNoun(nounB)) {
             throw new IllegalArgumentException();
         }
-        int v = nounsMap.get(nounA);
-        int w = nounsMap.get(nounB);
+        Set<Integer> v = nounsMap.get(nounA);
+        Set<Integer> w = nounsMap.get(nounB);
 
         int ancestor = sap.ancestor(v, w);
-        return synsetsMap.get(ancestor);
+        return synsetsMap.get(ancestor).iterator().next();
     }
 
     // do unit testing of this class
