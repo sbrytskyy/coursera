@@ -83,6 +83,7 @@ public class SAPTest {
         }
     }
 
+    @SuppressWarnings("unused")
     private static void printAdj(Digraph G, int v) {
         List<Integer> list = new ArrayList<>();
         Iterable<Integer> adj = G.adj(v);
