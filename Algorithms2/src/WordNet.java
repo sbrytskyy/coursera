@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
-import edu.princeton.cs.algs4.Topological;
 
 public class WordNet {
 
@@ -24,11 +24,25 @@ public class WordNet {
         digraph = new Digraph(size);
         readHypernyms(hypernyms);
 
-        Topological top = new Topological(digraph);
-        if (!top.hasOrder()) {
+        checkDAG();
+        sap = new SAP(digraph);
+    }
+
+    private void checkDAG() {
+        DirectedCycle cycle = new DirectedCycle(digraph);
+        if (cycle.hasCycle()) {
             throw new IllegalArgumentException();
         }
-        sap = new SAP(digraph);
+        // check one root
+        for (int v = 0, count = 0; v < digraph.V(); v++) {
+            if (digraph.outdegree(v) == 0) {
+                if (count == 0) {
+                    count++;
+                } else {
+                    throw new IllegalArgumentException();
+                }
+            }
+        }
     }
 
     private int readSynsets(String synsets) {

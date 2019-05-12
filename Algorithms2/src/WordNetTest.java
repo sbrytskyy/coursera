@@ -1,3 +1,4 @@
+import edu.princeton.cs.algs4.StdOut;
 
 public class WordNetTest {
 
@@ -7,8 +8,18 @@ public class WordNetTest {
     }
 
     private static void test() {
-        test0();
+//        test0();
 //        test1("resources/wordnet/synsets100-subgraph.txt", "resources/wordnet/hypernyms100-subgraph.txt");
+        testNotDAG("resources/wordnet/synsets3.txt", "resources/wordnet/hypernyms3InvalidTwoRoots.txt");
+    }
+
+    private static void testNotDAG(String synsets, String hypernyms) {
+        // TODO Auto-generated method stub
+        try {
+            new WordNet("resources/wordnet/synsets3.txt", "resources/wordnet/hypernyms3InvalidTwoRoots.txt");
+        } catch (IllegalArgumentException ex) {
+            StdOut.println(ex.getMessage());
+        }
     }
 
     private static void test0() {
