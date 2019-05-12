@@ -16,9 +16,39 @@ public class SAPTest {
         test1("resources/wordnet/digraph1.txt", 1, 6, -1, -1);
         test1("resources/wordnet/digraph2.txt", 1, 5, 2, 0);
         test1("resources/wordnet/digraph6.txt", 5, 3, 2, 0);
+
+        List<Integer> v = null;
+        List<Integer> w = null;
+        try {
+            test2("resources/wordnet/digraph1.txt", v, w, 4, 1);
+        } catch (IllegalArgumentException ex) {
+            StdOut.println(ex.getMessage());
+        }
+
+        v = new ArrayList<>();
+        w = new ArrayList<>();
+        w.add(null);
+        try {
+            test2("resources/wordnet/digraph1.txt", v, w, 4, 1);
+        } catch (IllegalArgumentException ex) {
+            StdOut.println(ex.getMessage());
+        }
     }
 
     private static void test1(String filename, int v, int w, int lengthRef, int ancestorRef) {
+        In in = new In(filename);
+        Digraph G = new Digraph(in);
+        SAP sap = new SAP(G);
+
+        int length = sap.length(v, w);
+        int ancestor = sap.ancestor(v, w);
+        StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
+        assert length == lengthRef;
+//        assert ancestor == ancestorRef;
+    }
+
+    private static void test2(String filename, Iterable<Integer> v, Iterable<Integer> w, int lengthRef,
+            int ancestorRef) {
         In in = new In(filename);
         Digraph G = new Digraph(in);
         SAP sap = new SAP(G);
