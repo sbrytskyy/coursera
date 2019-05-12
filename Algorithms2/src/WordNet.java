@@ -7,8 +7,8 @@ import edu.princeton.cs.algs4.Topological;
 
 public class WordNet {
 
-    private final Map<String, Integer> synsetsMap = new LinkedHashMap<>();
-    private final Map<Integer, String> synsetsReverseMap = new LinkedHashMap<>();
+    private final Map<Integer, String> synsetsMap = new LinkedHashMap<>();
+    private final Map<String, Integer> nounsMap = new LinkedHashMap<>();
     private final Digraph digraph;
     private final SAP sap;
 
@@ -21,7 +21,7 @@ public class WordNet {
         int size = readSynsets(synsets);
         digraph = new Digraph(size);
         readHypernyms(hypernyms);
-        
+
         Topological top = new Topological(digraph);
         if (!top.hasOrder()) {
             throw new IllegalArgumentException();
@@ -38,13 +38,17 @@ public class WordNet {
             counter++;
             String[] split = line.split(",");
             int synsetId = Integer.parseInt(split[0]);
-            synsetsMap.put(split[1], synsetId);
-            synsetsReverseMap.put(synsetId, split[1]);
+            synsetsMap.put(synsetId, split[1]);
+
+            String[] nouns = split[1].split(" ");
+            for (String noun : nouns) {
+                nounsMap.put(noun, synsetId);
+            }
         }
         return counter;
     }
 
-   private void readHypernyms(String hypernyms) {
+    private void readHypernyms(String hypernyms) {
         In in = new In(hypernyms);
         String line = null;
         while (!in.isEmpty()) {
@@ -60,7 +64,7 @@ public class WordNet {
 
     // returns all WordNet nouns
     public Iterable<String> nouns() {
-        return synsetsMap.keySet();
+        return nounsMap.keySet();
 
     }
 
@@ -69,7 +73,7 @@ public class WordNet {
         if (word == null) {
             throw new IllegalArgumentException();
         }
-        return synsetsMap.containsKey(word);
+        return nounsMap.containsKey(word);
     }
 
     // distance between nounA and nounB (defined below)
@@ -77,8 +81,8 @@ public class WordNet {
         if (!isNoun(nounA) || !isNoun(nounB)) {
             throw new IllegalArgumentException();
         }
-        int v = synsetsMap.get(nounA);
-        int w = synsetsMap.get(nounB);
+        int v = nounsMap.get(nounA);
+        int w = nounsMap.get(nounB);
 
         return sap.length(v, w);
     }
@@ -89,11 +93,11 @@ public class WordNet {
         if (!isNoun(nounA) || !isNoun(nounB)) {
             throw new IllegalArgumentException();
         }
-        int v = synsetsMap.get(nounA);
-        int w = synsetsMap.get(nounB);
+        int v = nounsMap.get(nounA);
+        int w = nounsMap.get(nounB);
 
         int ancestor = sap.ancestor(v, w);
-        return synsetsReverseMap.get(ancestor);
+        return synsetsMap.get(ancestor);
     }
 
     // do unit testing of this class
