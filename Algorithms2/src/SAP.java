@@ -1,3 +1,5 @@
+import java.util.Iterator;
+
 import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
 import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.In;
@@ -10,15 +12,11 @@ public class SAP {
 
     // constructor takes a digraph (not necessarily a DAG)
     public SAP(Digraph G) {
-        digraph = G;
+        digraph = new Digraph(G);
     }
 
     // length of shortest ancestral path between v and w; -1 if no such path
     public int length(int v, int w) {
-        if (v == w) {
-            return 0;
-        }
-
         BreadthFirstDirectedPaths bfspV = new BreadthFirstDirectedPaths(digraph, v);
         BreadthFirstDirectedPaths bfspW = new BreadthFirstDirectedPaths(digraph, w);
 
@@ -35,6 +33,9 @@ public class SAP {
 
     // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
+        verifyVertices(v);
+        verifyVertices(w);
+
         BreadthFirstDirectedPaths bfspV = new BreadthFirstDirectedPaths(digraph, v);
         BreadthFirstDirectedPaths bfspW = new BreadthFirstDirectedPaths(digraph, w);
 
@@ -43,6 +44,9 @@ public class SAP {
 
     // a common ancestor that participates in shortest ancestral path; -1 if no such path
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
+        verifyVertices(v);
+        verifyVertices(w);
+
         BreadthFirstDirectedPaths bfspV = new BreadthFirstDirectedPaths(digraph, v);
         BreadthFirstDirectedPaths bfspW = new BreadthFirstDirectedPaths(digraph, w);
 
@@ -62,6 +66,18 @@ public class SAP {
         }
 
         return length < Integer.MAX_VALUE ? length : -1;
+    }
+
+    private void verifyVertices(Iterable<Integer> vertices) {
+        if (vertices == null) {
+            throw new IllegalArgumentException();
+        }
+        Iterator<Integer> iterator = vertices.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next() == null) {
+                throw new IllegalArgumentException();
+            }
+        }
     }
 
     private int getAncestor(BreadthFirstDirectedPaths bfspV, BreadthFirstDirectedPaths bfspW) {
