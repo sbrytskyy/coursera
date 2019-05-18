@@ -3,16 +3,19 @@ import edu.princeton.cs.algs4.Picture;
 public class SeamCarver {
 
     private final Picture picture;
-    private final int[][] colors;
     private final double[][] energy;
-    private final int width;
-    private final int height;
+    private int width;
+    private int height;
 
-    public SeamCarver(Picture picture) {
-        this.picture = new Picture(picture); // create a seam carver object based on the given picture
+    public SeamCarver(Picture picture) { // create a seam carver object based on the given picture
+
+        if (picture == null)
+            throw new IllegalArgumentException();
+
+        this.picture = new Picture(picture);
         width = picture.width();
         height = picture.height();
-        this.colors = new int[width][height];
+        int[][] colors = new int[width][height];
         this.energy = new double[width][height];
 
         for (int y = 0; y < height; y++) {
@@ -21,10 +24,10 @@ public class SeamCarver {
             }
         }
 
-        buildEnergyMatrix();
+        buildEnergyMatrix(colors);
     }
 
-    private void buildEnergyMatrix() {
+    private void buildEnergyMatrix(int[][] colors) {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (x == 0 || y == 0 || x == width - 1 || y == height - 1) {
@@ -69,16 +72,45 @@ public class SeamCarver {
     }
 
     public int[] findHorizontalSeam() { // sequence of indices for horizontal seam
-        return null;
+        int[] seam = new int[width];
+        return seam;
     }
 
     public int[] findVerticalSeam() { // sequence of indices for vertical seam
-        return null;
+        int[] seam = new int[height];
+        return seam;
     }
 
     public void removeHorizontalSeam(int[] seam) { // remove horizontal seam from current picture
+        if (seam == null || seam.length != width || height <= 1) {
+            throw new IllegalArgumentException();
+        }
+
+        if (seam[0] < 0 || seam[0] >= height) {
+            throw new IllegalArgumentException();
+        }
+        for (int x = 1; x < width; x++) {
+            if (seam[x] < 0 || seam[x] >= height || Math.abs(seam[x] - seam[x - 1]) > 1) {
+                throw new IllegalArgumentException();
+            }
+        }
+        
+        height--;
     }
 
     public void removeVerticalSeam(int[] seam) { // remove vertical seam from current picture
+        if (seam == null || seam.length != height || width <= 1) {
+            throw new IllegalArgumentException();
+        }
+        if (seam[0] < 0 || seam[0] >= width) {
+            throw new IllegalArgumentException();
+        }
+        for (int y = 1; y < height; y++) {
+            if (seam[y] < 0 || seam[y] >= width || Math.abs(seam[y] - seam[y - 1]) > 1) {
+                throw new IllegalArgumentException();
+            }
+        }
+        
+        width--;
     }
 }
