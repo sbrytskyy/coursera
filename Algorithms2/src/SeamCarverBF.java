@@ -1,17 +1,16 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import edu.princeton.cs.algs4.Picture;
 
-public class SeamCarver {
+public class SeamCarverBF {
 
     private final Picture picture;
     private final double[][] energy;
     private int width;
     private int height;
 
-    public SeamCarver(Picture picture) { // create a seam carver object based on the given picture
+    public SeamCarverBF(Picture picture) { // create a seam carver object based on the given picture
 
         if (picture == null)
             throw new IllegalArgumentException();
@@ -88,84 +87,43 @@ public class SeamCarver {
         minEnergy = Double.POSITIVE_INFINITY;
         minSeam = new ArrayList<>();
 
-        double[][] distTo = new double[width][height];
-        int[][] edgeTo = new int[width][height];
-
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                if (y == 0) {
-                    distTo[x][y] = energy[x][y];
-                    continue;
-                }
-                distTo[x][y] = Double.POSITIVE_INFINITY;
-            }
-        }
-
-        for (int y = 0; y < height - 1; y++) {
-            for (int x = 0; x < width; x++) {
-                relaxV(x, y, distTo, edgeTo);
-            }
-        }
-
-//        printGraph(distTo, edgeTo);
-
-        double minDist = Double.POSITIVE_INFINITY;
-        int minX = 0;
-
+        List<Integer> lseam = new ArrayList<>();
         for (int x = 0; x < width; x++) {
-            if (Double.compare(distTo[x][height - 1], minDist) < 0) {
-                minX = x;
-                minDist = distTo[x][height - 1];
-            }
+            lseam.add(x);
+            dfxV(x, 0, energy[x][0], lseam);
+            lseam.remove(lseam.size() - 1);
         }
-
-//        System.out.println(minX + ":" + minDist);
 
         int[] seam = new int[height];
 
-        int x = minX;
-        for (int y = height - 1; y >= 0; y--) {
-            seam[y] = x;
-//            System.out.print(x);
-//            System.out.println(", ");
-            x = x - edgeTo[x][y];
+        if (minSeam.size() == seam.length) {
+            for (int i = 0; i < seam.length; i++) {
+                seam[i] = minSeam.get(i);
+            }
         }
-//        System.out.println();
-//        System.out.println(Arrays.toString(seam));
-
         return seam;
     }
 
-    private void printGraph(double[][] distTo, int[][] edgeTo) {
-        System.out.println("DIST TO");
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                System.out.print(distTo[x][y]);
-                System.out.print("\t");
+    private void dfxV(int x, int y, double seamEnergy, List<Integer> seam) {
+        System.out.println(x + ":" + y);
+
+        if (y == height - 1) {
+            if (Double.compare(seamEnergy, minEnergy) < 0) {
+                minEnergy = seamEnergy;
+                minSeam = new ArrayList<>(seam);
             }
-            System.out.println();
+            return;
         }
 
-        System.out.println("EDGE TO");
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                System.out.print(edgeTo[x][y]);
-                System.out.print("\t");
-            }
-            System.out.println();
-        }
-    }
-
-    private void relaxV(int x, int y, double[][] distTo, int[][] edgeTo) {
         for (int index = x - 1; index <= x + 1; index++) {
             if (index < 0 || index >= width) {
                 continue;
             }
 
-            if (distTo[index][y + 1] > distTo[x][y] + energy(index, y + 1)) {
-                distTo[index][y + 1] = distTo[x][y] + energy(index, y + 1);
-                edgeTo[index][y + 1] = index - x;
-            }
+            seam.add(index);
+            dfxV(index, y + 1, seamEnergy + energy[index][y + 1], seam);
+            seam.remove(seam.size() - 1);
+
         }
     }
 
