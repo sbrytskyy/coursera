@@ -2,7 +2,7 @@ import edu.princeton.cs.algs4.Picture;
 
 public class SeamCarver {
 
-    private final Picture picture;
+    private Picture picture;
     private double[][] energy;
     private int width;
     private int height;
@@ -13,14 +13,14 @@ public class SeamCarver {
             throw new IllegalArgumentException();
 
         this.picture = new Picture(picture);
-        width = picture.width();
-        height = picture.height();
+        this.width = picture.width();
+        this.height = picture.height();
 
         this.energy = new double[width][height];
         buildEnergyMatrix();
     }
 
-    private int[][] getColors(Picture picture) {
+    private int[][] getColors() {
         int[][] colors = new int[width][height];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -31,34 +31,42 @@ public class SeamCarver {
     }
 
     private void buildEnergyMatrix() {
-        int[][] colors = getColors(picture);
+        int[][] colors = getColors();
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                if (x == 0 || y == 0 || x == width - 1 || y == height - 1) {
-                    energy[x][y] = 1000.0;
-                    continue;
-                }
-
-                int rx = ((colors[x - 1][y] >> 16) & 0xFF) - ((colors[x + 1][y] >> 16) & 0xFF);
-                int gx = ((colors[x - 1][y] >> 8) & 0xFF) - ((colors[x + 1][y] >> 8) & 0xFF);
-                int bx = ((colors[x - 1][y] >> 0) & 0xFF) - ((colors[x + 1][y] >> 0) & 0xFF);
-
-                long deltaX = rx * rx + gx * gx + bx * bx;
-
-                int ry = ((colors[x][y - 1] >> 16) & 0xFF) - ((colors[x][y + 1] >> 16) & 0xFF);
-                int gy = ((colors[x][y - 1] >> 8) & 0xFF) - ((colors[x][y + 1] >> 8) & 0xFF);
-                int by = ((colors[x][y - 1] >> 0) & 0xFF) - ((colors[x][y + 1] >> 0) & 0xFF);
-
-                long deltaY = ry * ry + gy * gy + by * by;
-
-                energy[x][y] = Math.sqrt((double) deltaX + deltaY);
+                recalculateEnergy(x, y, colors);
             }
         }
     }
 
+    private void recalculateEnergy(int x, int y, int[][] colors) {
+        if (y < 0 || y >= height || x < 0 || x >= width) {
+            return;
+        }
+
+        if (x == 0 || y == 0 || x == width - 1 || y == height - 1) {
+            energy[x][y] = 1000.0;
+            return;
+        }
+
+        int rx = ((colors[x - 1][y] >> 16) & 0xFF) - ((colors[x + 1][y] >> 16) & 0xFF);
+        int gx = ((colors[x - 1][y] >> 8) & 0xFF) - ((colors[x + 1][y] >> 8) & 0xFF);
+        int bx = ((colors[x - 1][y] >> 0) & 0xFF) - ((colors[x + 1][y] >> 0) & 0xFF);
+
+        long deltaX = rx * rx + gx * gx + bx * bx;
+
+        int ry = ((colors[x][y - 1] >> 16) & 0xFF) - ((colors[x][y + 1] >> 16) & 0xFF);
+        int gy = ((colors[x][y - 1] >> 8) & 0xFF) - ((colors[x][y + 1] >> 8) & 0xFF);
+        int by = ((colors[x][y - 1] >> 0) & 0xFF) - ((colors[x][y + 1] >> 0) & 0xFF);
+
+        long deltaY = ry * ry + gy * gy + by * by;
+
+        energy[x][y] = Math.sqrt((double) deltaX + deltaY);
+    }
+
     public Picture picture() { // current picture
-        return this.picture;
+        return picture;
     }
 
     public int width() { // width of current picture
@@ -213,6 +221,31 @@ public class SeamCarver {
             }
         }
 
+        int[][] colors = getColors();
+
+        for (int y = 0; y < height; y++) {
+            int x = seam[y];
+
+            for (int i = x; i < width - 1; i++) {
+                colors[i][y] = colors[i + 1][y];
+                energy[i][y] = energy[i + 1][y];
+            }
+        }
+
+        for (int y = 0; y < height; y++) {
+            int x = seam[y];
+            recalculateEnergy(x - 1, y, colors);
+            recalculateEnergy(x, y, colors);
+            recalculateEnergy(x + 1, y, colors);
+        }
+
         width--;
+
+        this.picture = new Picture(width, height);
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                picture.setRGB(x, y, colors[x][y]);
+            }
+        }
     }
 }

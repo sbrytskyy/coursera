@@ -9,7 +9,7 @@ public class SeamCarverTest {
         SeamCarverTest sct = new SeamCarverTest();
         sct.test1("resources/seam/6x5.png");
         sct.test1("resources/seam/chameleon.png");
-        
+
 //        sct.test2("resources/seam/7x3.png");
     }
 
@@ -29,10 +29,15 @@ public class SeamCarverTest {
 //            }
 //            StdOut.println();
 //        }
-        
+
         int[] verticalSeam = sc.findVerticalSeam();
         StdOut.println(Arrays.toString(verticalSeam));
 
+        sc.removeVerticalSeam(verticalSeam);
+
+        height = sc.height();
+        width = sc.width();
+        StdOut.println("W: " + width + ", H: " + height);
     }
 
     private void test2(String filename) {
@@ -52,7 +57,7 @@ public class SeamCarverTest {
             StdOut.println();
         }
 
-        int[] seam = new int[] {2, 3, 2};
+        int[] seam = new int[] { 2, 3, 2 };
         sc.removeVerticalSeam(seam);
     }
 }
