@@ -1,13 +1,9 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import edu.princeton.cs.algs4.Picture;
 
 public class SeamCarver {
 
     private final Picture picture;
-    private final double[][] energy;
+    private double[][] energy;
     private int width;
     private int height;
 
@@ -19,19 +15,24 @@ public class SeamCarver {
         this.picture = new Picture(picture);
         width = picture.width();
         height = picture.height();
-        int[][] colors = new int[width][height];
-        this.energy = new double[width][height];
 
+        this.energy = new double[width][height];
+        buildEnergyMatrix();
+    }
+
+    private int[][] getColors(Picture picture) {
+        int[][] colors = new int[width][height];
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 colors[x][y] = picture.getRGB(x, y);
             }
         }
-
-        buildEnergyMatrix(colors);
+        return colors;
     }
 
-    private void buildEnergyMatrix(int[][] colors) {
+    private void buildEnergyMatrix() {
+        int[][] colors = getColors(picture);
+
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 if (x == 0 || y == 0 || x == width - 1 || y == height - 1) {
@@ -76,17 +77,59 @@ public class SeamCarver {
     }
 
     public int[] findHorizontalSeam() { // sequence of indices for horizontal seam
+        double[][] distTo = new double[width][height];
+        int[][] edgeTo = new int[width][height];
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (x == 0) {
+                    distTo[x][y] = energy[x][y];
+                    continue;
+                }
+                distTo[x][y] = Double.POSITIVE_INFINITY;
+            }
+        }
+
+        for (int x = 0; x < width - 1; x++) {
+            for (int y = 0; y < height; y++) {
+                relaxH(x, y, distTo, edgeTo);
+            }
+        }
+
+        double minDist = Double.POSITIVE_INFINITY;
+        int minY = 0;
+
+        for (int y = 0; y < height; y++) {
+            if (Double.compare(distTo[width - 1][y], minDist) < 0) {
+                minY = y;
+                minDist = distTo[width - 1][y];
+            }
+        }
+
         int[] seam = new int[width];
 
+        int y = minY;
+        for (int x = width - 1; x >= 0; x--) {
+            seam[x] = y;
+            y = y - edgeTo[x][y];
+        }
         return seam;
     }
 
-    private double minEnergy = Double.POSITIVE_INFINITY;
-    private List<Integer> minSeam = new ArrayList<>();
+    private void relaxH(int x, int y, double[][] distTo, int[][] edgeTo) {
+        for (int index = y - 1; index <= y + 1; index++) {
+            if (index < 0 || index >= height) {
+                continue;
+            }
+
+            if (distTo[x + 1][index] > distTo[x][y] + energy[x + 1][index]) {
+                distTo[x + 1][index] = distTo[x][y] + energy[x + 1][index];
+                edgeTo[x + 1][index] = index - y;
+            }
+        }
+    }
 
     public int[] findVerticalSeam() { // sequence of indices for vertical seam
-        minEnergy = Double.POSITIVE_INFINITY;
-        minSeam = new ArrayList<>();
 
         double[][] distTo = new double[width][height];
         int[][] edgeTo = new int[width][height];
@@ -107,8 +150,6 @@ public class SeamCarver {
             }
         }
 
-//        printGraph(distTo, edgeTo);
-
         double minDist = Double.POSITIVE_INFINITY;
         int minX = 0;
 
@@ -119,41 +160,14 @@ public class SeamCarver {
             }
         }
 
-//        System.out.println(minX + ":" + minDist);
-
         int[] seam = new int[height];
 
         int x = minX;
         for (int y = height - 1; y >= 0; y--) {
             seam[y] = x;
-//            System.out.print(x);
-//            System.out.println(", ");
             x = x - edgeTo[x][y];
         }
-//        System.out.println();
-//        System.out.println(Arrays.toString(seam));
-
         return seam;
-    }
-
-    private void printGraph(double[][] distTo, int[][] edgeTo) {
-        System.out.println("DIST TO");
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                System.out.print(distTo[x][y]);
-                System.out.print("\t");
-            }
-            System.out.println();
-        }
-
-        System.out.println("EDGE TO");
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                System.out.print(edgeTo[x][y]);
-                System.out.print("\t");
-            }
-            System.out.println();
-        }
     }
 
     private void relaxV(int x, int y, double[][] distTo, int[][] edgeTo) {
@@ -162,8 +176,8 @@ public class SeamCarver {
                 continue;
             }
 
-            if (distTo[index][y + 1] > distTo[x][y] + energy(index, y + 1)) {
-                distTo[index][y + 1] = distTo[x][y] + energy(index, y + 1);
+            if (distTo[index][y + 1] > distTo[x][y] + energy[index][y + 1]) {
+                distTo[index][y + 1] = distTo[x][y] + energy[index][y + 1];
                 edgeTo[index][y + 1] = index - x;
             }
         }
