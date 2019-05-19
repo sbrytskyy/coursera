@@ -71,7 +71,7 @@ public class SeamCarver {
     }
 
     public Picture picture() { // current picture
-        return picture;
+        return new Picture(picture);
     }
 
     public int width() { // width of current picture
@@ -237,6 +237,7 @@ public class SeamCarver {
             energy[x][height - 1] = Double.POSITIVE_INFINITY;
         }
 
+        // TODO Think how to optimize and do not build whole table
 //        for (int x = 0; x < width; x++) {
 //            int y = seam[x];
 //            recalculateEnergy(x, y - 1, colors);
@@ -284,6 +285,7 @@ public class SeamCarver {
             energy[width - 1][y] = Double.POSITIVE_INFINITY;
         }
 
+        // TODO Think how to optimize and do not build whole table
 //        for (int y = 0; y < height; y++) {
 //            int x = seam[y];
 //            recalculateEnergy(x - 1, y, colors);
