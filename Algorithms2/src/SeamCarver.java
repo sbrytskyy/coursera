@@ -11,7 +11,6 @@ public class SeamCarver {
             throw new IllegalArgumentException();
 
         this.picture = new Picture(picture);
-        this.energy = new double[picture.width()][picture.height()];
         buildEnergyMatrix();
     }
 
@@ -31,6 +30,8 @@ public class SeamCarver {
     private void buildEnergyMatrix() {
         int width = picture.width();
         int height = picture.height();
+
+        this.energy = new double[width][height];
 
         int[][] colors = getColors();
 
@@ -233,14 +234,15 @@ public class SeamCarver {
                 colors[x][i] = colors[x][i + 1];
                 energy[x][i] = energy[x][i + 1];
             }
+            energy[x][height - 1] = Double.POSITIVE_INFINITY;
         }
 
-        for (int x = 0; x < width; x++) {
-            int y = seam[x];
-            recalculateEnergy(x, y - 1, colors);
-            recalculateEnergy(x, y, colors);
-            recalculateEnergy(x, y + 1, colors);
-        }
+//        for (int x = 0; x < width; x++) {
+//            int y = seam[x];
+//            recalculateEnergy(x, y - 1, colors);
+//            recalculateEnergy(x, y, colors);
+//            recalculateEnergy(x, y + 1, colors);
+//        }
 
         height--;
 
@@ -250,6 +252,8 @@ public class SeamCarver {
                 picture.setRGB(x, y, colors[x][y]);
             }
         }
+
+        buildEnergyMatrix();
     }
 
     public void removeVerticalSeam(int[] seam) { // remove vertical seam from current picture
@@ -277,14 +281,15 @@ public class SeamCarver {
                 colors[i][y] = colors[i + 1][y];
                 energy[i][y] = energy[i + 1][y];
             }
+            energy[width - 1][y] = Double.POSITIVE_INFINITY;
         }
 
-        for (int y = 0; y < height; y++) {
-            int x = seam[y];
-            recalculateEnergy(x - 1, y, colors);
-            recalculateEnergy(x, y, colors);
-            recalculateEnergy(x + 1, y, colors);
-        }
+//        for (int y = 0; y < height; y++) {
+//            int x = seam[y];
+//            recalculateEnergy(x - 1, y, colors);
+//            recalculateEnergy(x, y, colors);
+//            recalculateEnergy(x + 1, y, colors);
+//        }
 
         width--;
 
@@ -294,5 +299,7 @@ public class SeamCarver {
                 picture.setRGB(x, y, colors[x][y]);
             }
         }
+
+        buildEnergyMatrix();
     }
 }
