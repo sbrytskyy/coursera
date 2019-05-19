@@ -38,6 +38,15 @@ public class SeamCarverTest {
         height = sc.height();
         width = sc.width();
         StdOut.println("W: " + width + ", H: " + height);
+
+        int[] horizontalSeam = sc.findHorizontalSeam();
+        StdOut.println(Arrays.toString(horizontalSeam));
+
+        sc.removeHorizontalSeam(horizontalSeam);
+
+        height = sc.height();
+        width = sc.width();
+        StdOut.println("W: " + width + ", H: " + height);
     }
 
     private void test2(String filename) {
