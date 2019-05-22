@@ -1,6 +1,8 @@
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import edu.princeton.cs.algs4.FlowNetwork;
+import edu.princeton.cs.algs4.FordFulkerson;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 
@@ -8,32 +10,38 @@ public class BaseballElimination {
 
     private final int teamsNumber;
     private final Map<String, Integer> teams = new LinkedHashMap<>();
-    private final int[] w;
-    private final int[] l;
-    private final int[] r;
-    private final int[][] g;
+    private final int[] wins;
+    private final int[] losses;
+    private final int[] remaining;
+    private final int[][] games;
+    
+    private FlowNetwork G;
+    private FordFulkerson ff;
 
     public BaseballElimination(String filename) { // create a baseball division from given filename in format specified below
         In in = new In(filename);
 
         teamsNumber = in.readInt();
 
-        w = new int[teamsNumber];
-        l = new int[teamsNumber];
-        r = new int[teamsNumber];
-        g = new int[teamsNumber][teamsNumber];
+        wins = new int[teamsNumber];
+        losses = new int[teamsNumber];
+        remaining = new int[teamsNumber];
+        games = new int[teamsNumber][teamsNumber];
 
         for (int i = 0; i < teamsNumber; i++) {
             teams.put(in.readString(), i);
 
-            w[i] = in.readInt();
-            l[i] = in.readInt();
-            r[i] = in.readInt();
+            wins[i] = in.readInt();
+            losses[i] = in.readInt();
+            remaining[i] = in.readInt();
 
             for (int j = 0; j < teamsNumber; j++) {
-                g[i][j] = in.readInt();
+                games[i][j] = in.readInt();
             }
         }
+        
+        G = new FlowNetwork(teamsNumber);
+        ff = new FordFulkerson(G, 0, 1);
     }
 
     public int numberOfTeams() { // number of teams
@@ -48,28 +56,28 @@ public class BaseballElimination {
         if (!teams.containsKey(team)) {
             throw new IllegalArgumentException();
         }
-        return w[teams.get(team)];
+        return wins[teams.get(team)];
     }
 
     public int losses(String team) { // number of losses for given team
         if (!teams.containsKey(team)) {
             throw new IllegalArgumentException();
         }
-        return l[teams.get(team)];
+        return losses[teams.get(team)];
     }
 
     public int remaining(String team) { // number of remaining games for given team
         if (!teams.containsKey(team)) {
             throw new IllegalArgumentException();
         }
-        return r[teams.get(team)];
+        return remaining[teams.get(team)];
     }
 
     public int against(String team1, String team2) { // number of remaining games between team1 and team2
         if (!teams.containsKey(team1) || !teams.containsKey(team2)) {
             throw new IllegalArgumentException();
         }
-        return g[teams.get(team1)][teams.get(team2)];
+        return games[teams.get(team1)][teams.get(team2)];
     }
 
     public boolean isEliminated(String team) { // is given team eliminated?
