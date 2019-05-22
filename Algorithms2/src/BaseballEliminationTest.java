@@ -1,0 +1,22 @@
+import edu.princeton.cs.algs4.StdOut;
+
+public class BaseballEliminationTest {
+    public static void main(String[] args) {
+        test1("resources/baseball/teams4.txt");
+    }
+
+    private static void test1(String filename) {
+        BaseballElimination division = new BaseballElimination(filename);
+        for (String team : division.teams()) {
+            if (division.isEliminated(team)) {
+                StdOut.print(team + " is eliminated by the subset R = { ");
+                for (String t : division.certificateOfElimination(team)) {
+                    StdOut.print(t + " ");
+                }
+                StdOut.println("}");
+            } else {
+                StdOut.println(team + " is not eliminated");
+            }
+        }
+    }
+}
