@@ -3,6 +3,7 @@ import edu.princeton.cs.algs4.StdOut;
 public class BaseballEliminationTest {
     public static void main(String[] args) {
         test1("resources/baseball/teams4.txt");
+        test1("resources/baseball/teams5.txt");
     }
 
     private static void test1(String filename) {
