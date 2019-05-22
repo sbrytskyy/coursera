@@ -81,10 +81,16 @@ public class BaseballElimination {
     }
 
     public boolean isEliminated(String team) { // is given team eliminated?
+        if (!teams.containsKey(team)) {
+            throw new IllegalArgumentException();
+        }
         return false;
     }
 
     public Iterable<String> certificateOfElimination(String team) { // subset R of teams that eliminates given team; null if not eliminated
+        if (!teams.containsKey(team)) {
+            throw new IllegalArgumentException();
+        }
         return null;
     }
 
