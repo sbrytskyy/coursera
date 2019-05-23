@@ -1,7 +1,7 @@
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import edu.princeton.cs.algs4.FlowEdge;
 import edu.princeton.cs.algs4.FlowNetwork;
@@ -12,7 +12,8 @@ import edu.princeton.cs.algs4.StdOut;
 public class BaseballElimination {
 
     private final int teamsNumber;
-    private final Map<String, Integer> teams = new LinkedHashMap<>();
+    private final Map<String, Integer> teamsMap = new LinkedHashMap<>();
+    private final String[] teams;
     private final int[] wins;
     private final int[] losses;
     private final int[] remaining;
@@ -20,10 +21,13 @@ public class BaseballElimination {
 
     private final boolean[] eliminated;
 
+    private final Map<Integer, List<String>> certificates = new LinkedHashMap<>();
+
     public BaseballElimination(String filename) { // create a baseball division from given filename in format specified below
         In in = new In(filename);
 
         teamsNumber = in.readInt();
+        teams = new String[teamsNumber];
 
         wins = new int[teamsNumber];
         losses = new int[teamsNumber];
@@ -33,7 +37,9 @@ public class BaseballElimination {
         eliminated = new boolean[teamsNumber];
 
         for (int i = 0; i < teamsNumber; i++) {
-            teams.put(in.readString(), i);
+            String team = in.readString();
+            teamsMap.put(team, i);
+            teams[i] = team;
 
             wins[i] = in.readInt();
             losses[i] = in.readInt();
@@ -53,46 +59,46 @@ public class BaseballElimination {
     }
 
     public Iterable<String> teams() { // all teams
-        return teams.keySet();
+        return teamsMap.keySet();
     }
 
     public int wins(String team) { // number of wins for given team
-        if (!teams.containsKey(team)) {
+        if (!teamsMap.containsKey(team)) {
             throw new IllegalArgumentException();
         }
-        return wins[teams.get(team)];
+        return wins[teamsMap.get(team)];
     }
 
     public int losses(String team) { // number of losses for given team
-        if (!teams.containsKey(team)) {
+        if (!teamsMap.containsKey(team)) {
             throw new IllegalArgumentException();
         }
-        return losses[teams.get(team)];
+        return losses[teamsMap.get(team)];
     }
 
     public int remaining(String team) { // number of remaining games for given team
-        if (!teams.containsKey(team)) {
+        if (!teamsMap.containsKey(team)) {
             throw new IllegalArgumentException();
         }
-        return remaining[teams.get(team)];
+        return remaining[teamsMap.get(team)];
     }
 
     public int against(String team1, String team2) { // number of remaining games between team1 and team2
-        if (!teams.containsKey(team1) || !teams.containsKey(team2)) {
+        if (!teamsMap.containsKey(team1) || !teamsMap.containsKey(team2)) {
             throw new IllegalArgumentException();
         }
-        return games[teams.get(team1)][teams.get(team2)];
+        return games[teamsMap.get(team1)][teamsMap.get(team2)];
     }
 
     public boolean isEliminated(String team) { // is given team eliminated?
-        if (!teams.containsKey(team)) {
+        if (!teamsMap.containsKey(team)) {
             throw new IllegalArgumentException();
         }
-        return eliminated[teams.get(team)];
+        return eliminated[teamsMap.get(team)];
     }
 
     public Iterable<String> certificateOfElimination(String team) { // subset R of teams that eliminates given team; null if not eliminated
-        if (!teams.containsKey(team)) {
+        if (!teamsMap.containsKey(team)) {
             throw new IllegalArgumentException();
         }
 
@@ -100,9 +106,7 @@ public class BaseballElimination {
             return null;
         }
 
-        List<String> cert = teams.keySet().stream().filter(name -> !eliminated[teams.get(name)])
-                .collect(Collectors.toList());
-        return cert;
+        return certificates.get(teamsMap.get(team));
     }
 
     public static void main(String[] args) {
@@ -126,7 +130,7 @@ public class BaseballElimination {
             if (eliminated[x]) {
                 continue;
             }
-            
+
             int source = 0;
 
             int teamV = source + 1;
@@ -137,9 +141,9 @@ public class BaseballElimination {
                 }
                 teamVertices.put(i, teamV++);
             }
-            
+
             int gamesV = teamV;
-            
+
             int gamesNum = 0;
             for (int i = 0; i < teamsNumber - 1; i++) {
                 if (i == x) {
@@ -181,13 +185,25 @@ public class BaseballElimination {
                 G.addEdge(new FlowEdge(teamVertices.get(i), sink, capacity));
             }
 
-//          System.out.println(G.toString());
             FordFulkerson maxflow = new FordFulkerson(G, source, sink);
 
             Iterable<FlowEdge> adj = G.adj(source);
             for (FlowEdge flowEdge : adj) {
                 if (Double.compare(flowEdge.flow(), flowEdge.capacity()) != 0) {
                     eliminated[x] = true;
+
+                    for (int i = 0; i < teamsNumber; i++) {
+                        if (i == x) {
+                            continue;
+                        }
+
+                        if (maxflow.inCut(teamVertices.get(i))) {
+                            List<String> cert = certificates.getOrDefault(x, new ArrayList<>());
+                            cert.add(teams[i]);
+                            certificates.put(x, cert);
+                        }
+                    }
+
                     break;
                 }
             }
@@ -204,6 +220,9 @@ public class BaseballElimination {
                 }
                 if (wins[i] + remaining[i] < wins[j]) {
                     eliminated[i] = true;
+                    List<String> cert = certificates.getOrDefault(i, new ArrayList<>());
+                    cert.add(teams[j]);
+                    certificates.put(i, cert);
                 }
             }
         }
