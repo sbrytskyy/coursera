@@ -26,12 +26,14 @@ public class FlowNetworkTest {
     }
 
     private void findMaxflow() {
-        dfs(source, new ArrayList<>());
+        List<List<FlowEdge>> paths = new ArrayList<>();
+        dfs(source, new ArrayList<>(), paths);
+        StdOut.println(paths);
     }
 
-    private void dfs(int v, List<FlowEdge> path) {
+    private void dfs(int v, List<FlowEdge> path, List<List<FlowEdge>> paths) {
         if (v == sink) {
-            StdOut.println(path);
+            paths.add(new ArrayList<>(path));
             return;
         }
 
@@ -39,7 +41,7 @@ public class FlowNetworkTest {
         for (FlowEdge e : adj) {
             if (e.from() == v) {
                 path.add(e);
-                dfs(e.other(v), path);
+                dfs(e.other(v), path, paths);
                 path.remove(path.size() - 1);
             }
         }
