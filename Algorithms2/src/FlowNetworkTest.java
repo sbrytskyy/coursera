@@ -91,6 +91,7 @@ public class FlowNetworkTest {
     public static void main(String[] args) {
         test1("resources/test/flownet1.txt", 5.0);
         test1("resources/test/flownet2.txt", 23.0);
+        test1("resources/test/flownet3.txt", 19.0);
     }
 
     private static void test1(String filename, double expected) {
