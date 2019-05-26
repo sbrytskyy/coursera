@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import edu.princeton.cs.algs4.FlowEdge;
@@ -16,6 +17,8 @@ public class FlowNetworkTest {
     private final FlowNetwork fn;
     private final int source;
     private final int sink;
+    
+    double maxFlow = 0.0;
 
     public FlowNetworkTest(String filename) {
         In in = new In(filename);
@@ -25,10 +28,48 @@ public class FlowNetworkTest {
         sink = fn.V() - 1;
     }
 
-    private void findMaxflow() {
+    public double findMaxflow() {
+        maxFlow = 0.0;
+        
         List<List<FlowEdge>> paths = new ArrayList<>();
         dfs(source, new ArrayList<>(), paths);
         StdOut.println(paths);
+
+        explorePaths(paths);
+        
+        return maxFlow;
+    }
+
+    private void explorePaths(List<List<FlowEdge>> paths) {
+        while (!paths.isEmpty()) {
+            Iterator<List<FlowEdge>> iterator = paths.iterator();
+            
+            while (iterator.hasNext()) {
+                List<FlowEdge> path = iterator.next();
+                
+                double flow = Double.POSITIVE_INFINITY;
+                boolean pathIsFull = false;
+                for (FlowEdge e : path) {
+                    if (Double.compare(e.flow(), e.capacity()) >= 0) {
+                        pathIsFull = true;
+                        break;
+                    }
+                    double f = e.capacity() - e.flow();
+                    if (Double.compare(f, flow) < 0) {
+                        flow = f;
+                    }
+                }
+                if (pathIsFull) {
+                    iterator.remove();
+                    continue;
+                }
+                
+                maxFlow += flow;
+                for (FlowEdge e : path) {
+                    e.addResidualFlowTo(e.to(), flow);
+                }
+            }
+        }
     }
 
     private void dfs(int v, List<FlowEdge> path, List<List<FlowEdge>> paths) {
@@ -48,13 +89,16 @@ public class FlowNetworkTest {
     }
 
     public static void main(String[] args) {
-        test1("resources/test/flownet1.txt");
+        test1("resources/test/flownet1.txt", 5.0);
+        test1("resources/test/flownet2.txt", 23.0);
     }
 
-    private static void test1(String filename) {
+    private static void test1(String filename, double expected) {
         FlowNetworkTest fnt = new FlowNetworkTest(filename);
         StdOut.println(fnt);
-        fnt.findMaxflow();
+        double maxflow = fnt.findMaxflow();
+        StdOut.println("Maxflow: " + maxflow);
+        assert Double.compare(maxflow, expected) == 0;
     }
 
 }
