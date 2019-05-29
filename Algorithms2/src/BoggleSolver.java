@@ -9,6 +9,13 @@ public class BoggleSolver {
 
     private final Set<String> dictionary;
     private final Set<String> prefixes;
+    
+    private int rows;
+    private int cols;
+    private int max;
+    private BoggleBoard board;
+    private Set<String> words;
+    private boolean[][] visited;
 
     public BoggleSolver(String[] dictionary) {
         this.dictionary = new LinkedHashSet<>();
@@ -25,18 +32,18 @@ public class BoggleSolver {
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
     public Iterable<String> getAllValidWords(BoggleBoard board) {
 
-        int rows = board.rows();
-        int cols = board.cols();
+        this.board = board;
+        rows = board.rows();
+        cols = board.cols();
         int counter = 0;
-        int max = rows * cols;
+        max = rows * cols;
 
-        Set<String> words = new LinkedHashSet<>();
-        boolean[][] visited = new boolean[rows][cols];
-        List<Character> word = new ArrayList<>();
+        words = new LinkedHashSet<>();
+        visited = new boolean[rows][cols];
 
         for (int x = 0; x < cols; x++) {
             for (int y = 0; y < rows; y++) {
-                dfs(x, y, counter + 1, visited, word, words, rows, cols, board, max);
+                dfs(x, y, counter + 1, "");
             }
         }
 
@@ -51,31 +58,23 @@ public class BoggleSolver {
         return validWords;
     }
 
-    private void dfs(int x, int y, int counter, boolean[][] visited, List<Character> word, Set<String> words, int rows,
-            int cols, BoggleBoard board, int max) {
+    private void dfs(int x, int y, int counter, String word) {
         visited[x][y] = true;
-        word.add(board.getLetter(x, y));
+        word += board.getLetter(x, y);
 
-        process(x, y, counter + 1, visited, word, words, rows, cols, board, max);
+        process(x, y, counter + 1, word);
 
         visited[x][y] = false;
-        word.remove(word.size() - 1);
     }
 
-    private void process(int x, int y, int counter, boolean[][] visited, List<Character> word, Set<String> words,
-            int rows, int cols, BoggleBoard board, int max) {
+    private void process(int x, int y, int counter, String word) {
 
-        StringBuilder sb = new StringBuilder();
-        for (Character c : word) {
-            sb.append(c);
-        }
-        String w = sb.toString();
-        if (!prefixes.contains(w)) {
+        if (!prefixes.contains(word)) {
             return;
         }
         
         if (counter > 3) {
-            words.add(w);
+            words.add(word);
         }
 
         if (counter == max) {
@@ -84,42 +83,42 @@ public class BoggleSolver {
 
         // Move NW
         if (x > 0 && y > 0 && !visited[x - 1][y - 1]) {
-            dfs(x - 1, y - 1, counter, visited, word, words, rows, cols, board, max);
+            dfs(x - 1, y - 1, counter, word);
         }
 
         // Move N
         if (y > 0 && !visited[x][y - 1]) {
-            dfs(x, y - 1, counter, visited, word, words, rows, cols, board, max);
+            dfs(x, y - 1, counter, word);
         }
 
         // Move NE
         if (x < cols - 1 && y > 0 && !visited[x + 1][y - 1]) {
-            dfs(x + 1, y - 1, counter, visited, word, words, rows, cols, board, max);
+            dfs(x + 1, y - 1, counter, word);
         }
 
         // Move W
         if (x > 0 && !visited[x - 1][y]) {
-            dfs(x - 1, y, counter, visited, word, words, rows, cols, board, max);
+            dfs(x - 1, y, counter, word);
         }
 
         // Move E
         if (x < cols - 1 && !visited[x + 1][y]) {
-            dfs(x + 1, y, counter, visited, word, words, rows, cols, board, max);
+            dfs(x + 1, y, counter, word);
         }
 
         // Move SW
         if (x > 0 && y < rows - 1 && !visited[x - 1][y + 1]) {
-            dfs(x - 1, y + 1, counter, visited, word, words, rows, cols, board, max);
+            dfs(x - 1, y + 1, counter, word);
         }
 
         // Move S
         if (y < rows - 1 && !visited[x][y + 1]) {
-            dfs(x, y + 1, counter, visited, word, words, rows, cols, board, max);
+            dfs(x, y + 1, counter, word);
         }
 
         // Move SE
         if (x < cols - 1 && y < rows - 1 && !visited[x + 1][y + 1]) {
-            dfs(x + 1, y + 1, counter, visited, word, words, rows, cols, board, max);
+            dfs(x + 1, y + 1, counter, word);
         }
     }
 
