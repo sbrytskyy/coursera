@@ -12,7 +12,6 @@ public class BoggleSolver {
 
     private int rows;
     private int cols;
-    private int max;
     private BoggleBoard bb;
     private Set<String> words;
     private boolean[][] visited;
@@ -39,7 +38,6 @@ public class BoggleSolver {
         bb = board;
         rows = board.rows();
         cols = board.cols();
-        max = rows * cols;
 
         words = new LinkedHashSet<>();
         visited = new boolean[rows][cols];
@@ -82,10 +80,6 @@ public class BoggleSolver {
 
         if (word.length() >= 3) {
             words.add(word);
-        }
-
-        if (word.length() == max) {
-            return;
         }
 
         // Move NW

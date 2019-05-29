@@ -7,6 +7,8 @@ public class BoggleSolverTest {
         test1();
         test2();
         test3();
+        test4();
+        test5();
     }
 
     private static void test1() {
@@ -65,8 +67,44 @@ public class BoggleSolverTest {
         assert score == 172;
     }
 
-    private static BoggleBoard createBoggleBoard() {
-        return new BoggleBoard();
+    private static void test4() {
+        String[] dictionary = readDictionary("resources/boggle/dictionary-16q.txt");
+        BoggleBoard board = new BoggleBoard("resources/boggle/board-16q.txt");
+
+        BoggleSolver solver = new BoggleSolver(dictionary);
+        Iterable<String> allValidWords = solver.getAllValidWords(board);
+        StdOut.println(allValidWords);
+
+        int score = 0;
+        int count = 0;
+        for (String word : allValidWords) {
+            score += solver.scoreOf(word);
+            count++;
+        }
+        StdOut.println("Score = " + score);
+        StdOut.println("Count = " + count);
+        assert count == 15;
+        assert score == 147;
+    }
+
+    private static void test5() {
+        String[] dictionary = readDictionary("resources/boggle/dictionary-16q.txt");
+        BoggleBoard board = new BoggleBoard("resources/boggle/board-4q.txt");
+
+        BoggleSolver solver = new BoggleSolver(dictionary);
+        Iterable<String> allValidWords = solver.getAllValidWords(board);
+        StdOut.println(allValidWords);
+
+        int score = 0;
+        int count = 0;
+        for (String word : allValidWords) {
+            score += solver.scoreOf(word);
+            count++;
+        }
+        StdOut.println("Score = " + score);
+        StdOut.println("Count = " + count);
+        assert count == 3;
+        assert score == 15;
     }
 
     private static String[] readDictionary(String filename) {
