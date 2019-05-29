@@ -9,11 +9,11 @@ public class BoggleSolver {
 
     private final Set<String> dictionary;
     private final Set<String> prefixes;
-    
+
     private int rows;
     private int cols;
     private int max;
-    private BoggleBoard board;
+    private BoggleBoard bb;
     private Set<String> words;
     private boolean[][] visited;
 
@@ -22,9 +22,13 @@ public class BoggleSolver {
         this.prefixes = new LinkedHashSet<>();
         for (String word : dictionary) {
             this.dictionary.add(word);
-            
+
             for (int i = 1; i <= word.length(); i++) {
-                prefixes.add(word.substring(0, i));
+                String substring = word.substring(0, i);
+                if (substring.endsWith("Q")) {
+                    substring += "U";
+                }
+                prefixes.add(substring);
             }
         }
     }
@@ -32,10 +36,9 @@ public class BoggleSolver {
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
     public Iterable<String> getAllValidWords(BoggleBoard board) {
 
-        this.board = board;
+        bb = board;
         rows = board.rows();
         cols = board.cols();
-        int counter = 0;
         max = rows * cols;
 
         words = new LinkedHashSet<>();
@@ -43,7 +46,7 @@ public class BoggleSolver {
 
         for (int x = 0; x < cols; x++) {
             for (int y = 0; y < rows; y++) {
-                dfs(x, y, counter + 1, "");
+                dfs(x, y, "");
             }
         }
 
@@ -58,67 +61,71 @@ public class BoggleSolver {
         return validWords;
     }
 
-    private void dfs(int x, int y, int counter, String word) {
+    private void dfs(int x, int y, String word) {
         visited[x][y] = true;
-        word += board.getLetter(x, y);
+        char letter = bb.getLetter(x, y);
+        word += letter;
+        if (letter == 'Q') {
+            word += "U";
+        }
 
-        process(x, y, counter + 1, word);
+        process(x, y, word);
 
         visited[x][y] = false;
     }
 
-    private void process(int x, int y, int counter, String word) {
+    private void process(int x, int y, String word) {
 
         if (!prefixes.contains(word)) {
             return;
         }
-        
-        if (counter > 3) {
+
+        if (word.length() >= 3) {
             words.add(word);
         }
 
-        if (counter == max) {
+        if (word.length() == max) {
             return;
         }
 
         // Move NW
         if (x > 0 && y > 0 && !visited[x - 1][y - 1]) {
-            dfs(x - 1, y - 1, counter, word);
+            dfs(x - 1, y - 1, word);
         }
 
         // Move N
         if (y > 0 && !visited[x][y - 1]) {
-            dfs(x, y - 1, counter, word);
+            dfs(x, y - 1, word);
         }
 
         // Move NE
         if (x < cols - 1 && y > 0 && !visited[x + 1][y - 1]) {
-            dfs(x + 1, y - 1, counter, word);
+            dfs(x + 1, y - 1, word);
         }
 
         // Move W
         if (x > 0 && !visited[x - 1][y]) {
-            dfs(x - 1, y, counter, word);
+            dfs(x - 1, y, word);
         }
 
         // Move E
         if (x < cols - 1 && !visited[x + 1][y]) {
-            dfs(x + 1, y, counter, word);
+            dfs(x + 1, y, word);
         }
 
         // Move SW
         if (x > 0 && y < rows - 1 && !visited[x - 1][y + 1]) {
-            dfs(x - 1, y + 1, counter, word);
+            dfs(x - 1, y + 1, word);
         }
 
         // Move S
         if (y < rows - 1 && !visited[x][y + 1]) {
-            dfs(x, y + 1, counter, word);
+            dfs(x, y + 1, word);
         }
 
         // Move SE
         if (x < cols - 1 && y < rows - 1 && !visited[x + 1][y + 1]) {
-            dfs(x + 1, y + 1, counter, word);
+            dfs(x + 1, y + 1, word);
         }
     }
 
