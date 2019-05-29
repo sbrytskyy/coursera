@@ -6,6 +6,7 @@ public class BoggleSolverTest {
     public static void main(String[] args) {
         test1();
         test2();
+        test3();
     }
 
     private static void test1() {
@@ -42,6 +43,26 @@ public class BoggleSolverTest {
         StdOut.println("Count = " + count);
         assert count == 29;
         assert score == 84;
+    }
+
+    private static void test3() {
+        String[] dictionary = readDictionary("resources/boggle/dictionary-yawl.txt");
+        BoggleBoard board = new BoggleBoard("resources/boggle/board-antidisestablishmentarianisms.txt");
+
+        BoggleSolver solver = new BoggleSolver(dictionary);
+        Iterable<String> allValidWords = solver.getAllValidWords(board);
+        StdOut.println(allValidWords);
+
+        int score = 0;
+        int count = 0;
+        for (String word : allValidWords) {
+            score += solver.scoreOf(word);
+            count++;
+        }
+        StdOut.println("Score = " + score);
+        StdOut.println("Count = " + count);
+        assert count == 40;
+        assert score == 172;
     }
 
     private static BoggleBoard createBoggleBoard() {

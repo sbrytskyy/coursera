@@ -62,8 +62,8 @@ public class BoggleSolver {
     }
 
     private void dfs(int x, int y, String word) {
-        visited[x][y] = true;
-        char letter = bb.getLetter(x, y);
+        visited[y][x] = true;
+        char letter = bb.getLetter(y, x);
         word += letter;
         if (letter == 'Q') {
             word += "U";
@@ -71,7 +71,7 @@ public class BoggleSolver {
 
         process(x, y, word);
 
-        visited[x][y] = false;
+        visited[y][x] = false;
     }
 
     private void process(int x, int y, String word) {
@@ -89,42 +89,42 @@ public class BoggleSolver {
         }
 
         // Move NW
-        if (x > 0 && y > 0 && !visited[x - 1][y - 1]) {
+        if (x > 0 && y > 0 && !visited[y - 1][x - 1]) {
             dfs(x - 1, y - 1, word);
         }
 
         // Move N
-        if (y > 0 && !visited[x][y - 1]) {
+        if (y > 0 && !visited[y - 1][x]) {
             dfs(x, y - 1, word);
         }
 
         // Move NE
-        if (x < cols - 1 && y > 0 && !visited[x + 1][y - 1]) {
+        if (x < cols - 1 && y > 0 && !visited[y - 1][x + 1]) {
             dfs(x + 1, y - 1, word);
         }
 
         // Move W
-        if (x > 0 && !visited[x - 1][y]) {
+        if (x > 0 && !visited[y][x - 1]) {
             dfs(x - 1, y, word);
         }
 
         // Move E
-        if (x < cols - 1 && !visited[x + 1][y]) {
+        if (x < cols - 1 && !visited[y][x + 1]) {
             dfs(x + 1, y, word);
         }
 
         // Move SW
-        if (x > 0 && y < rows - 1 && !visited[x - 1][y + 1]) {
+        if (x > 0 && y < rows - 1 && !visited[y + 1][x - 1]) {
             dfs(x - 1, y + 1, word);
         }
 
         // Move S
-        if (y < rows - 1 && !visited[x][y + 1]) {
+        if (y < rows - 1 && !visited[y + 1][x]) {
             dfs(x, y + 1, word);
         }
 
         // Move SE
-        if (x < cols - 1 && y < rows - 1 && !visited[x + 1][y + 1]) {
+        if (x < cols - 1 && y < rows - 1 && !visited[y + 1][x + 1]) {
             dfs(x + 1, y + 1, word);
         }
     }
