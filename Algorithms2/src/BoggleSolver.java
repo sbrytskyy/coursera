@@ -1,14 +1,11 @@
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 public class BoggleSolver {
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
 
-    private final Set<String> dictionary;
-    private final Set<String> prefixes;
+    private final Trie dictionary;
 
     private int rows;
     private int cols;
@@ -17,18 +14,9 @@ public class BoggleSolver {
     private boolean[][] visited;
 
     public BoggleSolver(String[] dictionary) {
-        this.dictionary = new LinkedHashSet<>();
-        this.prefixes = new LinkedHashSet<>();
+        this.dictionary = new Trie();
         for (String word : dictionary) {
             this.dictionary.add(word);
-
-            for (int i = 1; i <= word.length(); i++) {
-                String substring = word.substring(0, i);
-                if (substring.endsWith("Q")) {
-                    substring += "U";
-                }
-                prefixes.add(substring);
-            }
         }
     }
 
@@ -48,15 +36,7 @@ public class BoggleSolver {
             }
         }
 
-        List<String> validWords = new ArrayList<>();
-
-        for (String w : words) {
-            if (dictionary.contains(w)) {
-                validWords.add(w);
-            }
-        }
-
-        return validWords;
+        return words;
     }
 
     private void dfs(int x, int y, String word) {
@@ -74,12 +54,14 @@ public class BoggleSolver {
 
     private void process(int x, int y, String word) {
 
-        if (!prefixes.contains(word)) {
+        if (!dictionary.containsPrefix(word)) {
             return;
         }
 
         if (word.length() >= 3) {
-            words.add(word);
+            if (dictionary.contains(word)) {
+                words.add(word);
+            }
         }
 
         // Move NW
