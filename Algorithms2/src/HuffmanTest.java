@@ -5,9 +5,10 @@ import java.io.PrintStream;
 
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
+import edu.princeton.cs.algs4.Huffman;
 import edu.princeton.cs.algs4.In;
 
-public class MoveToFrontTest {
+public class HuffmanTest {
 
     public static void main(String[] args) {
         testHuffman("resources/burrows/abra.txt");
@@ -32,7 +33,7 @@ public class MoveToFrontTest {
             String decoded = decode(encoded);
             stdout.println("Decoded string: " + decoded);
             
-//            assert text.equals(decoded);
+            assert text.equals(decoded);
 
         } finally {
             System.setIn(stdin);
@@ -47,7 +48,7 @@ public class MoveToFrontTest {
         PrintStream ps = new PrintStream(baos);
         System.setOut(ps);
 
-        MoveToFront.encode();
+        Huffman.compress();
 
         byte[] encoded = baos.toByteArray();
         BinaryStdIn.close();
@@ -63,7 +64,7 @@ public class MoveToFrontTest {
         PrintStream ps = new PrintStream(baos);
         System.setOut(ps);
 
-        MoveToFront.decode();
+        Huffman.expand();
 
         BinaryStdIn.close();
         BinaryStdOut.close();
