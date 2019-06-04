@@ -1,6 +1,3 @@
-import java.util.Iterator;
-import java.util.LinkedList;
-
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
@@ -15,19 +12,20 @@ public class MoveToFront {
         String s = BinaryStdIn.readString();
         char[] input = s.toCharArray();
 
-        LinkedList<Character> alphabet = new LinkedList<>();
-        for (char c = 0; c < R; c++) {
-            alphabet.add(c);
+        char[] alphabet = new char[R];
+        for (int i = 0; i < R; i++) {
+            alphabet[i] = (char) i;
         }
 
         for (char c : input) {
             byte pos = 0;
-            Iterator<Character> iterator = alphabet.iterator();
-            while (iterator.hasNext()) {
-                char next = iterator.next();
+            for (int i = 0; i < R; i++) {
+                char next = alphabet[i];
                 if (next == c) {
-                    iterator.remove();
-                    alphabet.addFirst(c);
+                    for (int j = i; j >= 1; j--) {
+                        alphabet[j] = alphabet[j - 1];
+                    }
+                    alphabet[0] = c;
                     BinaryStdOut.write(pos);
                     break;
                 }
@@ -45,15 +43,18 @@ public class MoveToFront {
         String s = BinaryStdIn.readString();
         char[] input = s.toCharArray();
 
-        LinkedList<Character> alphabet = new LinkedList<>();
-        for (char c = 0; c < R; c++) {
-            alphabet.add(c);
+        char[] alphabet = new char[R];
+        for (int i = 0; i < R; i++) {
+            alphabet[i] = (char) i;
         }
 
         for (char c : input) {
             int pos = c;
-            char ch = alphabet.remove(pos);
-            alphabet.addFirst(ch);
+            char ch = alphabet[pos];
+            for (int j = pos; j >= 1; j--) {
+                alphabet[j] = alphabet[j - 1];
+            }
+            alphabet[0] = ch;
             BinaryStdOut.write(ch);
         }
 
