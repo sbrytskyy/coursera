@@ -1,16 +1,18 @@
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class TrieCircularSuffix {
     private static final int R = 256;
 
     private Node root;
-    
+
     private int index = 0;
 
     private final int[] orders;
 
     private static class Node {
-        private Node[] next = new Node[R];
+        private Map<Character, Node> next = new LinkedHashMap<>();
         private int order;
         public boolean isString;
     }
@@ -22,28 +24,28 @@ public class TrieCircularSuffix {
     }
 
     public int[] getOrderArray() {
-        return orders;
+        return Arrays.copyOf(orders, orders.length);
     }
 
     private void buildTrie(String s) {
         int order = 0;
-        
+
         add(s, order++);
-        
+
         char[] ca = s.toCharArray();
         int len = ca.length;
 
-        char[] copy = new char[len]; 
+        char[] copy = new char[len];
 
         int start = 1;
         while (start < len) {
-            
+
             System.arraycopy(ca, start, copy, 0, len - start);
             System.arraycopy(ca, 0, copy, len - start, start);
-            
+
             String aux = new String(copy);
             add(aux, order++);
-            
+
             start++;
         }
     }
@@ -59,10 +61,10 @@ public class TrieCircularSuffix {
             index++;
             return;
         }
-        
-        for (int i = 0; i < R; i++) {
-            if (node.next[i] != null) {
-                dfs(node.next[i], s + (char)i);
+
+        for (char c = 0; c < R; c++) {
+            if (node.next.get(c) != null) {
+                dfs(node.next.get(c), s + c);
             }
         }
     }
@@ -72,21 +74,22 @@ public class TrieCircularSuffix {
     }
 
     private Node add(Node x, String key, int d, int order) {
-        if (x == null) x = new Node();
+        if (x == null)
+            x = new Node();
         if (d == key.length()) {
             x.isString = true;
             x.order = order;
-        }
-        else {
+        } else {
             char c = key.charAt(d);
-            x.next[c] = add(x.next[c], key, d+1, order);
+            // x.next[c] = add(x.next[c], key, d + 1, order);
+            x.next.put(c, add(x.next.get(c), key, d + 1, order));
         }
         return x;
     }
-    
+
     public static void main(String[] args) {
         String s = "ABRACADABRA!";
-        
+
         TrieCircularSuffix t = new TrieCircularSuffix(s);
         int[] orderArray = t.getOrderArray();
         System.out.println(Arrays.toString(orderArray));
