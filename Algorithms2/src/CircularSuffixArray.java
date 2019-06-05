@@ -8,43 +8,6 @@ public class CircularSuffixArray {
 
     private final Integer[] orders;
 
-    private class SortbySuffix implements Comparator<Integer> {
-        private final char[] ca;
-
-        public SortbySuffix(String s) {
-            ca = s.toCharArray();
-        }
-
-        @Override
-        public int compare(Integer a, Integer b) {
-            
-            int index1 = a;
-            int index2 = b;
-            
-            for (int i = 0; i < ca.length; i++) {
-
-                if (index1 > ca.length - 1) {
-                    index1 = 0;
-                }
-                if (index2 > ca.length - 1) {
-                    index2 = 0;
-                }
-
-                char c1 = ca[index1];
-                char c2 = ca[index2];
-
-                if (c1 != c2) {
-                    return c1 - c2;
-                }
-                
-                index1++;
-                index2++;
-            }
-
-            return 0;
-        }
-    }
-
     public CircularSuffixArray(String s) { // circular suffix array of s
 
         if (s == null) {
@@ -56,8 +19,39 @@ public class CircularSuffixArray {
         for (int i = 0; i < len; i++) {
             orders[i] = i;
         }
-        Comparator<Integer> comparator = new SortbySuffix(s);
-        Arrays.sort(orders, comparator);
+        
+        char[] ca = s.toCharArray();
+        Arrays.sort(orders, new Comparator<Integer>() {
+
+            @Override
+            public int compare(Integer a, Integer b) {
+                int index1 = a;
+                int index2 = b;
+                
+                for (int i = 0; i < len; i++) {
+
+                    if (index1 > len - 1) {
+                        index1 = 0;
+                    }
+                    if (index2 > len - 1) {
+                        index2 = 0;
+                    }
+
+                    char c1 = ca[index1];
+                    char c2 = ca[index2];
+
+                    if (c1 != c2) {
+                        return c1 - c2;
+                    }
+                    
+                    index1++;
+                    index2++;
+                }
+
+                return 0;
+            }
+            
+        });
     }
 
     public int length() { // length of s
