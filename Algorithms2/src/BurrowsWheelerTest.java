@@ -20,6 +20,8 @@ public class BurrowsWheelerTest {
         InputStream stdin = System.in;
         PrintStream stdout = System.out;
 
+        stdout.println("Input string: " + text);
+
         try {
             byte[] encoded = transform(text);
             
@@ -33,7 +35,7 @@ public class BurrowsWheelerTest {
             String decoded = inverseTransform(encoded);
             stdout.println("Decoded string: " + decoded);
 
-//                assert text.equals(decoded);
+            assert text.equals(decoded);
 
         } finally {
             System.setIn(stdin);
