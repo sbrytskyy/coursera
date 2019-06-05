@@ -1,3 +1,8 @@
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
+
 import edu.princeton.cs.algs4.BinaryStdIn;
 import edu.princeton.cs.algs4.BinaryStdOut;
 
@@ -32,8 +37,30 @@ public class BurrowsWheeler {
     // apply Burrows-Wheeler inverse transform, reading from standard input and writing to standard output
     public static void inverseTransform() {
         // read the input
-        BinaryStdIn.readString();
+        int first = BinaryStdIn.readInt();
+        String encoded = BinaryStdIn.readString();
+        char[] t = encoded.toCharArray();
+        
+        int len = t.length;
+        
+        Map<Character, LinkedList<Integer>> map = new LinkedHashMap<>();
+        for (int i = 0; i < len; i++) {
+            LinkedList<Integer> linkedList = map.getOrDefault(t[i], new LinkedList<>());
+            linkedList.add(i);
+            map.put(t[i], linkedList);
+        }
 
+        Arrays.sort(t);
+        int next[] = new int[len];
+        for (int i = 0; i < len; i++) {
+            next[i] = map.get(t[i]).remove();
+        }
+        
+        for (int i = 0; i < len; i++) {
+            BinaryStdOut.write(t[first]);
+            first = next[first];
+        }
+        
         // close output stream
         BinaryStdOut.close();
     }
