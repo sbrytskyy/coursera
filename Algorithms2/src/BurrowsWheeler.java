@@ -19,16 +19,10 @@ public class BurrowsWheeler {
 
         BinaryStdOut.write(first);
 
-        char[] ca = s.toCharArray();
-        char[] copy = new char[length];
-
         for (int i = 0; i < length; i++) {
-            int index = cfa.index(i);
-
-            System.arraycopy(ca, 0, copy, length - index, index);
-            System.arraycopy(ca, index, copy, 0, length - index);
-
-            BinaryStdOut.write(copy[length - 1]);
+            int shift = cfa.index(i);
+            int index = (length - 1 + shift) % length;
+            BinaryStdOut.write(s.charAt(index));
         }
 
         // close output stream
@@ -38,7 +32,7 @@ public class BurrowsWheeler {
     // apply Burrows-Wheeler inverse transform, reading from standard input and writing to standard output
     public static void inverseTransform() {
         // read the input
-        String s = BinaryStdIn.readString();
+        BinaryStdIn.readString();
 
         // close output stream
         BinaryStdOut.close();
