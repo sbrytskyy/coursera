@@ -88,8 +88,11 @@ public class TrieCircularSuffix {
     }
 
     public static void main(String[] args) {
-        String s = "ABRACADABRA!";
+        test1("ABRACADABRA!");
+        test1("ABBABABBBB");
+    }
 
+    private static void test1(String s) {
         TrieCircularSuffix t = new TrieCircularSuffix(s);
         int[] orderArray = t.getOrderArray();
         System.out.println(Arrays.toString(orderArray));
