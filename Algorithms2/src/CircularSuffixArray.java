@@ -6,6 +6,8 @@ import edu.princeton.cs.algs4.StdOut;
 
 public class CircularSuffixArray {
 
+    private final Integer[] orders;
+
     private class SortbySuffix implements Comparator<Integer> {
         private final char[] ca;
 
@@ -43,11 +45,9 @@ public class CircularSuffixArray {
         }
     }
 
-    private final Integer[] orders;
-
     public CircularSuffixArray(String s) { // circular suffix array of s
 
-        if (s == null || s.isEmpty()) {
+        if (s == null) {
             throw new IllegalArgumentException();
         }
 
